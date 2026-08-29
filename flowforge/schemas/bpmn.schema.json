@@ -4,88 +4,40 @@
   "title": "FlowForge BPMN 2.0 Process Diagram",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schema_version",
-    "diagram_type",
-    "meta",
-    "lanes",
-    "nodes",
-    "edges"
-  ],
+  "required": ["schema_version", "diagram_type", "meta", "lanes", "nodes", "edges"],
   "properties": {
-    "schema_version": {
-      "const": 1
-    },
-    "diagram_type": {
-      "const": "bpmn"
-    },
+    "schema_version": { "const": 1 },
+    "diagram_type": { "const": "bpmn" },
     "meta": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "title"
-      ],
+      "required": ["title"],
       "properties": {
-        "title": {
-          "type": "string",
-          "minLength": 1
-        },
-        "locale": {
-          "$ref": "common.schema.json#/$defs/locale"
-        },
-        "subtitle": {
-          "type": "string"
-        },
-        "output": {
-          "type": "string"
-        },
-        "animation": {
-          "$ref": "common.schema.json#/$defs/animation"
-        },
-        "visual_preset": {
-          "$ref": "common.schema.json#/$defs/visualPreset"
-        },
-        "quality_profile": {
-          "$ref": "common.schema.json#/$defs/qualityProfile"
-        },
-        "views": {
-          "$ref": "common.schema.json#/$defs/guidedViews"
-        },
-        "legend": {
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "mode": { "$ref": "common.schema.json#/$defs/legendMode" },
-            "entries": {
-              "type": "object",
-              "additionalProperties": false,
-              "properties": {
-                "frontend": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "backend": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "database": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "cloud": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "security": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "messagebus": { "$ref": "common.schema.json#/$defs/legendEntry" },
-                "external": { "$ref": "common.schema.json#/$defs/legendEntry" }
-              }
-            }
-          }
-        },
+        "title": { "type": "string", "minLength": 1 },
+        "subtitle": { "type": "string" },
+        "locale": { "$ref": "common.schema.json#/$defs/locale" },
+        "output": { "type": "string" },
+        "animation": { "$ref": "common.schema.json#/$defs/animation" },
+        "visual_preset": { "$ref": "common.schema.json#/$defs/visualPreset" },
+        "quality_profile": { "$ref": "common.schema.json#/$defs/qualityProfile" },
+        "ownership_profile": { "enum": ["process-ownership"] },
+        "views": { "$ref": "common.schema.json#/$defs/guidedViews" },
         "viewBox": {
           "type": "array",
-          "prefixItems": [
-            {
-              "type": "number",
-              "minimum": 700
-            },
-            {
-              "type": "number",
-              "minimum": 240
-            }
-          ],
-          "items": false,
-          "minItems": 2,
-          "maxItems": 2
+          "prefixItems": [{ "type": "number", "minimum": 700 }, { "type": "number", "minimum": 240 }],
+          "items": false, "minItems": 2, "maxItems": 2
+        }
+      }
+    },
+    "pools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "label": { "type": "string", "minLength": 1 }
         }
       }
     },
@@ -95,24 +47,12 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "label"
-        ],
+        "required": ["id", "label"],
         "properties": {
-          "id": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "label": {
-            "type": "string",
-            "minLength": 1
-          },
-          "variant": {
-            "enum": [
-              "normal",
-              "exception"
-            ]
-          }
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "label": { "type": "string", "minLength": 1 },
+          "pool": { "$ref": "common.schema.json#/$defs/id" },
+          "variant": { "enum": ["normal", "exception"] }
         }
       }
     },
@@ -121,33 +61,13 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "label",
-          "fromCol",
-          "toCol"
-        ],
+        "required": ["id", "label", "fromCol", "toCol"],
         "properties": {
-          "id": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "label": {
-            "type": "string",
-            "minLength": 1
-          },
-          "fromCol": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 5
-          },
-          "toCol": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 5
-          },
-          "variant": {
-            "$ref": "common.schema.json#/$defs/variant"
-          }
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "label": { "type": "string", "minLength": 1 },
+          "fromCol": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "toCol": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "variant": { "$ref": "common.schema.json#/$defs/variant" }
         }
       }
     },
@@ -156,46 +76,21 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "label",
-          "lane",
-          "fromCol",
-          "toCol"
-        ],
+        "required": ["id", "label", "lane", "fromCol", "toCol"],
         "properties": {
-          "id": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "label": {
-            "type": "string",
-            "minLength": 1
-          },
-          "lane": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "fromCol": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 5
-          },
-          "toCol": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 5
-          },
-          "variant": {
-            "$ref": "common.schema.json#/$defs/variant"
-          }
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "label": { "type": "string", "minLength": 1 },
+          "lane": { "$ref": "common.schema.json#/$defs/id" },
+          "fromCol": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "toCol": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "variant": { "$ref": "common.schema.json#/$defs/variant" }
         }
       }
     },
     "mainPath": {
       "type": "array",
       "minItems": 2,
-      "items": {
-        "$ref": "common.schema.json#/$defs/id"
-      }
+      "items": { "$ref": "common.schema.json#/$defs/id" }
     },
     "nodes": {
       "type": "array",
@@ -203,52 +98,23 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "id",
-          "lane",
-          "col",
-          "type",
-          "label"
-        ],
+        "required": ["id", "lane", "col", "kind", "label"],
         "properties": {
-          "id": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "lane": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "col": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 5
-          },
-          "type": {
-            "$ref": "common.schema.json#/$defs/componentType"
-          },
-          "label": {
-            "type": "string",
-            "minLength": 1
-          },
-          "sublabel": {
-            "type": "string"
-          },
-          "tag": {
-            "type": "string"
-          },
-          "brand": {
-            "$ref": "common.schema.json#/$defs/brandMark"
-          },
-          "width": {
-            "type": "number",
-            "minimum": 32
-          },
-          "height": {
-            "type": "number",
-            "minimum": 32
-          },
-          "yOffset": {
-            "type": "number"
-          }
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "lane": { "$ref": "common.schema.json#/$defs/id" },
+          "col": { "type": "integer", "minimum": 0, "maximum": 5 },
+          "kind": { "enum": ["event", "task", "gateway", "dataObject"] },
+          "label": { "type": "string", "minLength": 1 },
+          "eventType": { "enum": ["start", "intermediate", "end"] },
+          "trigger": { "enum": ["none", "message", "timer", "error", "escalation", "signal"] },
+          "taskType": { "enum": ["user", "service", "manual", "script", "business-rule", "send", "receive"] },
+          "gatewayType": { "enum": ["exclusive", "parallel", "inclusive"] },
+          "owner": { "type": "string" },
+          "sublabel": { "type": "string" },
+          "tag": { "type": "string" },
+          "width": { "type": "number", "minimum": 24 },
+          "height": { "type": "number", "minimum": 24 },
+          "yOffset": { "type": "number" }
         }
       }
     },
@@ -257,90 +123,30 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "from",
-          "to"
-        ],
+        "required": ["from", "to"],
         "properties": {
-          "id": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "from": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "to": {
-            "$ref": "common.schema.json#/$defs/id"
-          },
-          "label": {
-            "type": "string"
-          },
-          "variant": {
-            "$ref": "common.schema.json#/$defs/variant"
-          },
-          "role": {
-            "enum": [
-              "main",
-              "branch",
-              "async",
-              "return",
-              "error"
-            ]
-          },
-          "fromSide": {
-            "$ref": "common.schema.json#/$defs/side"
-          },
-          "toSide": {
-            "$ref": "common.schema.json#/$defs/side"
-          },
-          "route": {
-            "enum": [
-              "auto",
-              "straight",
-              "drop",
-              "outside-right",
-              "return-left",
-              "bottom-channel",
-              "up-channel"
-            ]
-          },
-          "via": {
-            "type": "array",
-            "items": {
-              "$ref": "common.schema.json#/$defs/point"
-            }
-          },
-          "labelAt": {
-            "$ref": "common.schema.json#/$defs/point"
-          },
-          "labelDx": {
-            "type": "number"
-          },
-          "labelDy": {
-            "type": "number"
-          },
-          "labelSegment": {
-            "type": "integer",
-            "minimum": 0
-          },
-          "channelX": {
-            "type": "number"
-          },
-          "channelY": {
-            "type": "number"
-          },
-          "bias": {
-            "type": "number",
-            "minimum": 0,
-            "maximum": 1
-          },
-          "width": {
-            "$ref": "common.schema.json#/$defs/relationshipWidth"
-          }
+          "id": { "$ref": "common.schema.json#/$defs/id" },
+          "from": { "$ref": "common.schema.json#/$defs/id" },
+          "to": { "$ref": "common.schema.json#/$defs/id" },
+          "label": { "type": "string" },
+          "kind": { "enum": ["sequence", "message"] },
+          "variant": { "$ref": "common.schema.json#/$defs/variant" },
+          "role": { "enum": ["main", "branch", "async", "return", "error"] },
+          "fromSide": { "$ref": "common.schema.json#/$defs/side" },
+          "toSide": { "$ref": "common.schema.json#/$defs/side" },
+          "route": { "enum": ["auto", "straight", "drop", "outside-right", "return-left", "bottom-channel", "up-channel"] },
+          "via": { "type": "array", "items": { "$ref": "common.schema.json#/$defs/point" } },
+          "labelAt": { "$ref": "common.schema.json#/$defs/point" },
+          "labelDx": { "type": "number" },
+          "labelDy": { "type": "number" },
+          "labelSegment": { "type": "integer", "minimum": 0 },
+          "channelX": { "type": "number" },
+          "channelY": { "type": "number" },
+          "bias": { "type": "number", "minimum": 0, "maximum": 1 },
+          "width": { "$ref": "common.schema.json#/$defs/relationshipWidth" }
         }
       }
     },
-    "cards": {
-      "$ref": "common.schema.json#/$defs/cards"
-    }
+    "cards": { "$ref": "common.schema.json#/$defs/cards" }
   }
 }

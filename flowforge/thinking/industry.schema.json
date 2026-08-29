@@ -1,0 +1,28 @@
+{
+  "$id": "https://github.com/flowforge/flowforge/thinking/industry.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FlowForge industry guidance",
+  "description": "Industry-specific authoring guidance for business process maps. Paraphrased in FlowForge's own words.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack_version", "attribution", "industries"],
+  "properties": {
+    "pack_version": { "const": 1 },
+    "attribution": { "type": "string", "minLength": 10 },
+    "industries": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "notes", "watchFor"],
+        "properties": {
+          "id": { "type": "string", "enum": ["generic", "saas", "finance", "healthcare", "manufacturing", "retail", "logistics", "public-sector", "agencies", "energy"] },
+          "label": { "type": "string", "minLength": 3 },
+          "notes": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+          "watchFor": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

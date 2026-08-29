@@ -39,7 +39,7 @@ Try the CLI directly:
 cd flowforge
 npm install
 node bin/flowforge.mjs doctor
-node bin/flowforge.mjs render bpmn examples/order-return.bpmn.json examples/order-return.bpmn-rendered.html --quality showcase
+node bin/flowforge.mjs render bpmn examples/order-to-fulfillment.bpmn.json examples/order-to-fulfillment.bpmn-rendered.html --quality showcase
 node bin/flowforge.mjs compare bpmn examples/order-to-cash.bpmn.json examples/order-to-cash-v2.bpmn.json examples/order-to-cash-delta.html --json
 ```
 

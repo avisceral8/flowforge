@@ -10,26 +10,66 @@
   "added": {
     "nodes": [
       {
-        "id": "verify",
-        "lane": "process",
+        "id": "validate",
+        "lane": "finance",
         "col": 1,
-        "type": "security",
-        "label": "Verify"
+        "kind": "task",
+        "taskType": "service",
+        "owner": "Finance",
+        "label": "Validate credit",
+        "sublabel": "limit + terms",
+        "width": 108
+      },
+      {
+        "id": "credit",
+        "lane": "finance",
+        "col": 3,
+        "kind": "gateway",
+        "gatewayType": "exclusive",
+        "label": "Credit ok?"
+      },
+      {
+        "id": "rejected",
+        "lane": "finance",
+        "col": 5,
+        "kind": "event",
+        "eventType": "end",
+        "label": "Rejected"
       }
     ],
-    "lanes": [],
-    "edges": []
+    "lanes": [
+      {
+        "id": "finance",
+        "label": "Finance",
+        "pool": "company"
+      }
+    ],
+    "edges": [
+      {
+        "id": "e5",
+        "from": "credit",
+        "to": "rejected",
+        "label": "no"
+      },
+      {
+        "id": "e6",
+        "from": "fulfill",
+        "to": "ship"
+      },
+      {
+        "id": "e7",
+        "from": "ship",
+        "to": "delivered",
+        "kind": "message",
+        "label": "shipped",
+        "fromSide": "right",
+        "toSide": "right",
+        "route": "outside-right"
+      }
+    ]
   },
   "removed": {
-    "nodes": [
-      {
-        "id": "check",
-        "lane": "process",
-        "col": 1,
-        "type": "security",
-        "label": "Check"
-      }
-    ],
+    "nodes": [],
     "lanes": [],
     "edges": []
   },
@@ -38,52 +78,64 @@
     "lanes": [],
     "edges": [
       {
-        "id": "e1",
+        "id": "e2",
         "fieldChanges": [
           "to"
         ],
         "before": {
-          "id": "e1",
-          "from": "order",
-          "to": "check"
-        },
-        "after": {
-          "id": "e1",
-          "from": "order",
-          "to": "verify"
-        }
-      },
-      {
-        "id": "e2",
-        "fieldChanges": [
-          "from"
-        ],
-        "before": {
           "id": "e2",
-          "from": "check",
-          "to": "ship"
+          "from": "place",
+          "to": "fulfill",
+          "kind": "message",
+          "label": "order"
         },
         "after": {
           "id": "e2",
-          "from": "verify",
-          "to": "ship"
+          "from": "place",
+          "to": "validate",
+          "kind": "message",
+          "label": "order"
         }
       },
       {
         "id": "e3",
         "fieldChanges": [
-          "label"
+          "from",
+          "to"
         ],
         "before": {
           "id": "e3",
-          "from": "ship",
-          "to": "pay"
+          "from": "fulfill",
+          "to": "ship"
         },
         "after": {
           "id": "e3",
+          "from": "validate",
+          "to": "credit"
+        }
+      },
+      {
+        "id": "e4",
+        "fieldChanges": [
+          "from",
+          "to",
+          "label"
+        ],
+        "before": {
+          "id": "e4",
           "from": "ship",
-          "to": "pay",
-          "label": "shipped"
+          "to": "delivered",
+          "kind": "message",
+          "label": "shipped",
+          "fromSide": "right",
+          "toSide": "right",
+          "route": "outside-right"
+        },
+        "after": {
+          "id": "e4",
+          "from": "credit",
+          "to": "fulfill",
+          "label": "yes"
         }
       }
     ]

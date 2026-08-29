@@ -3,48 +3,76 @@
   "diagram_type": "bpmn",
   "meta": {
     "title": "Order-to-Cash Process v2",
+    "subtitle": "Order received, credit checked, goods shipped — with a rejection path",
     "quality_profile": "showcase",
     "views": [
       {
         "id": "happy-path",
-        "label": "Order to payment",
-        "focus": ["order", "verify", "ship", "pay"],
-        "note": "Follow a clean order from receipt through payment."
+        "label": "Order to delivery",
+        "focus": ["start", "place", "validate", "credit", "fulfill", "ship", "delivered"],
+        "note": "Follow an order from placement through delivery."
+      },
+      {
+        "id": "rejection-path",
+        "label": "Credit rejection",
+        "focus": ["credit", "rejected"],
+        "note": "See where a credit failure stops the order."
       }
     ],
-    "output": "examples/order-to-cash-v2.bpmn-rendered.html",
-    "viewBox": [720, 320]
+    "output": "examples/order-to-cash-v2.bpmn-rendered.html"
   },
-  "lanes": [
-    { "id": "process", "label": "Order-to-Cash" }
+  "pools": [
+    { "id": "customer", "label": "Customer" },
+    { "id": "company", "label": "Company" }
   ],
-  "mainPath": ["order", "verify", "ship", "pay"],
+  "lanes": [
+    { "id": "customer", "label": "Customer", "pool": "customer" },
+    { "id": "finance", "label": "Finance", "pool": "company" },
+    { "id": "warehouse", "label": "Warehouse", "pool": "company" }
+  ],
   "nodes": [
-    { "id": "order", "lane": "process", "col": 0, "type": "frontend", "label": "Order" },
-    { "id": "verify", "lane": "process", "col": 1, "type": "security", "label": "Verify" },
-    { "id": "ship", "lane": "process", "col": 3, "type": "messagebus", "label": "Ship" },
-    { "id": "pay", "lane": "process", "col": 5, "type": "backend", "label": "Pay" }
+    { "id": "start", "lane": "customer", "col": 0, "kind": "event", "eventType": "start", "label": "Start" },
+    { "id": "place", "lane": "customer", "col": 1, "kind": "task", "taskType": "send", "owner": "Customer", "label": "Place order", "sublabel": "quote + PO" },
+    { "id": "validate", "lane": "finance", "col": 1, "kind": "task", "taskType": "service", "owner": "Finance", "label": "Validate credit", "sublabel": "limit + terms", "width": 108 },
+    { "id": "credit", "lane": "finance", "col": 3, "kind": "gateway", "gatewayType": "exclusive", "label": "Credit ok?" },
+    { "id": "fulfill", "lane": "warehouse", "col": 3, "kind": "task", "taskType": "user", "owner": "Warehouse", "label": "Fulfill order", "sublabel": "pick + pack" },
+    { "id": "ship", "lane": "warehouse", "col": 5, "kind": "task", "taskType": "service", "owner": "Warehouse", "label": "Ship order", "sublabel": "carrier handoff" },
+    { "id": "delivered", "lane": "customer", "col": 5, "kind": "event", "eventType": "end", "label": "Delivered" },
+    { "id": "rejected", "lane": "finance", "col": 5, "kind": "event", "eventType": "end", "label": "Rejected" }
   ],
   "edges": [
-    { "id": "e1", "from": "order", "to": "verify" },
-    { "id": "e2", "from": "verify", "to": "ship" },
-    { "id": "e3", "from": "ship", "to": "pay", "label": "shipped" }
+    { "id": "e1", "from": "start", "to": "place" },
+    { "id": "e2", "from": "place", "to": "validate", "kind": "message", "label": "order" },
+    { "id": "e3", "from": "validate", "to": "credit" },
+    { "id": "e4", "from": "credit", "to": "fulfill", "label": "yes" },
+    { "id": "e5", "from": "credit", "to": "rejected", "label": "no" },
+    { "id": "e6", "from": "fulfill", "to": "ship" },
+    { "id": "e7", "from": "ship", "to": "delivered", "kind": "message", "label": "shipped", "fromSide": "right", "toSide": "right", "route": "outside-right" }
   ],
   "cards": [
     {
       "dot": "cyan",
       "title": "BPMN Process Rules",
       "items": [
-        "One start per entry lane",
-        "Gateways have labeled branches",
-        "Cross-lane handoffs are sequence flows"
+        "One start event, two end events",
+        "Exclusive gateway with labeled branches",
+        "Message flows cross the customer/company boundary",
+        "Sequence flows stay within one pool"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Controls",
+      "items": [
+        "Credit validation is a named service task",
+        "Rejection is an explicit end state"
       ]
     },
     {
       "dot": "emerald",
       "title": "Why It Matters",
       "items": [
-        "Auditors can follow the money path",
+        "Auditors can follow goods and money separately",
         "The map regenerates when the process changes"
       ]
     }

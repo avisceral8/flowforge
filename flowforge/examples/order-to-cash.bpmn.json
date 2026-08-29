@@ -3,50 +3,36 @@
   "diagram_type": "bpmn",
   "meta": {
     "title": "Order-to-Cash Process",
+    "subtitle": "Order received, fulfilled, shipped, and delivered",
     "quality_profile": "showcase",
     "views": [
-      {
-        "id": "happy-path",
-        "label": "Order to payment",
-        "focus": ["order", "check", "ship", "pay"],
-        "note": "Follow a clean order from receipt through payment."
-      }
+      { "id": "happy-path", "label": "Order to delivery", "focus": ["start", "place", "fulfill", "ship", "delivered"], "note": "Follow an order from placement through delivery." }
     ],
-    "output": "examples/order-to-cash.bpmn-rendered.html",
-    "viewBox": [720, 320]
+    "output": "examples/order-to-cash.bpmn-rendered.html"
   },
-  "lanes": [
-    { "id": "process", "label": "Order-to-Cash" }
+  "pools": [
+    { "id": "customer", "label": "Customer" },
+    { "id": "company", "label": "Company" }
   ],
-  "mainPath": ["order", "check", "ship", "pay"],
+  "lanes": [
+    { "id": "customer", "label": "Customer", "pool": "customer" },
+    { "id": "warehouse", "label": "Warehouse", "pool": "company" }
+  ],
   "nodes": [
-    { "id": "order", "lane": "process", "col": 0, "type": "frontend", "label": "Order" },
-    { "id": "check", "lane": "process", "col": 1, "type": "security", "label": "Check" },
-    { "id": "ship", "lane": "process", "col": 3, "type": "messagebus", "label": "Ship" },
-    { "id": "pay", "lane": "process", "col": 5, "type": "backend", "label": "Pay" }
+    { "id": "start", "lane": "customer", "col": 0, "kind": "event", "eventType": "start", "label": "Start" },
+    { "id": "place", "lane": "customer", "col": 1, "kind": "task", "taskType": "send", "owner": "Customer", "label": "Place order", "sublabel": "quote + PO" },
+    { "id": "fulfill", "lane": "warehouse", "col": 3, "kind": "task", "taskType": "user", "owner": "Warehouse", "label": "Fulfill order", "sublabel": "pick + pack" },
+    { "id": "ship", "lane": "warehouse", "col": 5, "kind": "task", "taskType": "service", "owner": "Warehouse", "label": "Ship order", "sublabel": "carrier handoff" },
+    { "id": "delivered", "lane": "customer", "col": 5, "kind": "event", "eventType": "end", "label": "Delivered" }
   ],
   "edges": [
-    { "id": "e1", "from": "order", "to": "check" },
-    { "id": "e2", "from": "check", "to": "ship" },
-    { "id": "e3", "from": "ship", "to": "pay" }
+    { "id": "e1", "from": "start", "to": "place" },
+    { "id": "e2", "from": "place", "to": "fulfill", "kind": "message", "label": "order" },
+    { "id": "e3", "from": "fulfill", "to": "ship" },
+    { "id": "e4", "from": "ship", "to": "delivered", "kind": "message", "label": "shipped", "fromSide": "right", "toSide": "right", "route": "outside-right" }
   ],
   "cards": [
-    {
-      "dot": "cyan",
-      "title": "BPMN Process Rules",
-      "items": [
-        "One start per entry lane",
-        "Gateways have labeled branches",
-        "Cross-lane handoffs are sequence flows"
-      ]
-    },
-    {
-      "dot": "emerald",
-      "title": "Why It Matters",
-      "items": [
-        "Auditors can follow the money path",
-        "The map regenerates when the process changes"
-      ]
-    }
+    { "dot": "cyan", "title": "BPMN Process Rules", "items": ["One start and one end event", "Message flows cross the customer/company boundary", "Sequence flows stay in one pool"] },
+    { "dot": "emerald", "title": "Why It Matters", "items": ["The map regenerates when the process changes"] }
   ]
 }

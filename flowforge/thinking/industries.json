@@ -1,0 +1,60 @@
+{
+  "pack_version": 1,
+  "attribution": "Industry authoring guidance distilled in FlowForge's own words from common regulatory and operating patterns; paired with the MIT-licensed Lenny's Product Skills collection (github.com/refoundai/lenny-skills, © 2025 Refound AI) where general product practice applies.",
+  "industries": [
+    {
+      "id": "generic",
+      "label": "Industry-agnostic",
+      "notes": [
+        "Name owners, make handoffs explicit, and draw gates where work changes hands between teams.",
+        "Prefer the smallest diagram that answers the question; split large maps by audience."
+      ],
+      "watchFor": ["Committee ownership ('the team') instead of one accountable name", "Undrawn escalation and exception paths"]
+    },
+    {
+      "id": "saas",
+      "label": "SaaS / software",
+      "notes": [
+        "Map the self-serve path end to end: discovery, signup, activation, habit, expansion.",
+        "Metering, limits, and feature gates are real business logic — draw them as gates."
+      ],
+      "watchFor": ["Acquisition machinery drawn with no retention evidence", "Migration and downgrade flows omitted"]
+    },
+    {
+      "id": "finance",
+      "label": "Finance / fintech",
+      "notes": [
+        "Segregation of duties is structural: approver, executor, and reconciler are separate lanes.",
+        "Every money-moving edge needs an audit-trail artifact."
+      ],
+      "watchFor": ["Approval the same owner can bypass", "Manual reconciliation drawn as automatic"]
+    },
+    {
+      "id": "healthcare",
+      "label": "Healthcare",
+      "notes": [
+        "Separate clinical ownership from administrative ownership on every lane.",
+        "Patient data edges respect consent, access, and disclosure as explicit gates."
+      ],
+      "watchFor": ["Data flows crossing boundaries without a consent node", "Throughput pressure drawn into clinical decisions"]
+    },
+    {
+      "id": "manufacturing",
+      "label": "Manufacturing",
+      "notes": [
+        "Separate quality control from throughput; inspection is a named gate.",
+        "Physical material flows and information flows are different edge kinds."
+      ],
+      "watchFor": ["Rework and scrap loops hidden", "Inventory handoffs without owners"]
+    },
+    {
+      "id": "logistics",
+      "label": "Logistics",
+      "notes": [
+        "Every leg names its carrier and handoff mechanism.",
+        "Exceptions (delay, damage, loss) are first-class paths, not prose."
+      ],
+      "watchFor": ["Undrawn customs/duty gates", "Status updates without a source system"]
+    }
+  ]
+}

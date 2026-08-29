@@ -90,8 +90,15 @@ function legendY() {
 }
 
 function measureNode(node) {
-  const width = node.width || layout.nodeW;
-  const height = node.height || (node.tag ? 68 : layout.nodeH);
+  const kindSizes = {
+    event: { w: node.width || 40, h: node.height || 40 },
+    gateway: { w: node.width || 52, h: node.height || 52 },
+    dataObject: { w: node.width || 92, h: node.height || 44 },
+    task: { w: node.width || layout.nodeW, h: node.height || (node.tag ? 68 : layout.nodeH) },
+  };
+  const size = kindSizes[node.kind] || kindSizes.task;
+  const width = size.w;
+  const height = size.h;
   const cx = layout.colXs[node.col];
   const contentH = layout.laneH - layout.laneTitleH;
   const y = laneTop(node.lane) + layout.laneTitleH + (contentH - height) / 2 + (node.yOffset || 0);
@@ -187,7 +194,8 @@ function validateWorkflow() {
       continue;
     }
     const estLabelW = textUnits(node.label) * 6.8;
-    if (estLabelW > node.width + 6) {
+    const labelInsideShape = node.kind === 'task' || node.kind === 'dataObject';
+    if (labelInsideShape && estLabelW > node.width + 6) {
       problems.push(`Label "${node.label}" (~${Math.round(estLabelW)}px) is wider than node "${node.id}" (${node.width}px) — shorten the label or increase node.width.`);
     }
     const brandRailProblem = brandTopRailProblem(node, node.width, nodeTextFit.labelMinimum);
@@ -401,6 +409,62 @@ function validateWorkflow() {
     profile: workflow.meta?.quality_profile,
   }));
 
+  // --- BPMN 2.0 semantic rules ---
+  const nodeById = nodes;
+  const startCount = [...nodes.values()].filter((node) => node.kind === 'event' && node.eventType === 'start').length;
+  const endCount = [...nodes.values()].filter((node) => node.kind === 'event' && node.eventType === 'end').length;
+  if (startCount === 0) problems.push('BPMN: at least one start event is required.');
+  if (endCount === 0) problems.push('BPMN: at least one end event is required.');
+
+  const lanePool = new Map(asArray(workflow.lanes).map((lane) => [lane.id, lane.pool || lane.id]));
+  for (const edge of workflow.edges) {
+    const from = nodeById.get(edge.from);
+    const to = nodeById.get(edge.to);
+    if (!from) problems.push(`BPMN: sequence/message flow "${edge.id || edge.from}" references unknown node "${edge.from}".`);
+    if (!to) problems.push(`BPMN: sequence/message flow "${edge.id || edge.to}" references unknown node "${edge.to}".`);
+    if (from && to) {
+      if (edge.kind === 'message' && lanePool.get(from.lane) === lanePool.get(to.lane)) {
+        problems.push(`BPMN: message flow "${edge.id || `${edge.from}->${edge.to}`}" must cross pools, but both ends are in pool "${lanePool.get(from.lane)}".`);
+      }
+      if (edge.kind !== 'message' && lanePool.get(from.lane) !== lanePool.get(to.lane) && from.lane !== to.lane) {
+        problems.push(`BPMN: sequence flow "${edge.id || `${edge.from}->${edge.to}`}" crosses lanes/pools — use a message flow across pools, or keep it inside one lane.`);
+      }
+    }
+  }
+
+  for (const node of nodes.values()) {
+    const incoming = workflow.edges.filter((edge) => edge.to === node.id).length;
+    const outgoing = workflow.edges.filter((edge) => edge.from === node.id).length;
+    const isStart = node.kind === 'event' && node.eventType === 'start';
+    const isEnd = node.kind === 'event' && node.eventType === 'end';
+    if (!isStart && incoming === 0 && outgoing > 0) {
+      problems.push(`BPMN: node "${node.id}" has no incoming flow — only start events may have none.`);
+    }
+    if (!isEnd && outgoing === 0 && incoming > 0) {
+      problems.push(`BPMN: node "${node.id}" has no outgoing flow — only end events may have none (no dead ends).`);
+    }
+    if (node.kind === 'gateway') {
+      if (incoming < 1) problems.push(`BPMN: gateway "${node.id}" must have at least one incoming flow.`);
+      if (outgoing < 1) problems.push(`BPMN: gateway "${node.id}" must have at least one outgoing flow.`);
+      if (node.gatewayType === 'exclusive' && outgoing > 1) {
+        const outgoingEdges = workflow.edges.filter((edge) => edge.from === node.id);
+        for (const edge of outgoingEdges) {
+          if (!edge.label) problems.push(`BPMN: exclusive gateway "${node.id}" must label every outgoing branch ("${edge.to}" is unlabeled).`);
+        }
+      }
+    }
+    if (workflow.meta?.ownership_profile === 'process-ownership') {
+      if (node.kind === 'task' && !node.owner) {
+        problems.push(`process-ownership: task "${node.id}" must name an owner.`);
+      }
+      for (const edge of workflow.edges.filter((edge) => edge.from === node.id)) {
+        if (edge.label === undefined && (edge.kind === 'message' || node.lane !== (nodeById.get(edge.to)?.lane))) {
+          problems.push(`process-ownership: handoff "${node.id}" -> "${edge.to}" must name its mechanism (label).`);
+        }
+      }
+    }
+  }
+
   if (viewBox[0] < layout.laneX + layout.laneW + 16) {
     problems.push(`viewBox width ${viewBox[0]} clips the ${layout.laneW}px lanes — set meta.viewBox[0] to at least ${layout.laneX + layout.laneW + 16}.`);
   }
@@ -598,9 +662,53 @@ function renderGroup(group, index) {
         <text x="${span.x + 10}" y="${y + 14}" class="${textClass}" font-size="7" font-weight="600">${esc(group.label)}</text>`;
 }
 
-function renderNode(node) {
-  const fill = componentFill[node.type] || 'c-external';
-  const accent = componentText[node.type] || 't-muted';
+function bpmnFill(node) {
+  if (node.kind === 'event') {
+    const byType = { start: 'c-backend', intermediate: 'c-frontend', end: 'c-security' };
+    return byType[node.eventType] || 'c-frontend';
+  }
+  if (node.kind === 'gateway') return 'c-cloud';
+  if (node.kind === 'dataObject') return 'c-database';
+  return 'c-mask';
+}
+
+function taskTypeGlyph(taskType) {
+  const glyphs = {
+    user: 'U', service: 'S', manual: 'M', script: '{ }', 'business-rule': 'R', send: '>', receive: '<',
+  };
+  return glyphs[taskType] || 'T';
+}
+
+function renderEvent(node) {
+  const r = node.height / 2 - 2;
+  const inner = node.eventType === 'intermediate'
+    ? `\n        <circle cx="${node.cx}" cy="${node.cy}" r="${r - 5}" class="${bpmnFill(node)}" stroke-width="1"/>`
+    : node.eventType === 'end'
+      ? `\n        <circle cx="${node.cx}" cy="${node.cy}" r="${r - 6}" class="${bpmnFill(node)}" stroke-width="3"/>`
+      : '';
+  return `        <g ${focusNodeAttrs(node.id, node.label, eventPassport(node), workflow.meta.locale)}>
+          ${focusNodeTitle(node.label, eventPassport(node))}
+          <circle cx="${node.cx}" cy="${node.cy}" r="${r}" class="${bpmnFill(node)}" stroke-width="2"/>
+${inner.trim() ? `${inner}` : ''}
+          <text data-node-label="" x="${node.cx}" y="${node.cy + r + 12}" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
+        </g>`;
+}
+
+function renderGateway(node) {
+  const w = node.width / 2 - 2;
+  const h = node.height / 2 - 2;
+  const points = `${node.cx},${node.cy - h} ${node.cx + w},${node.cy} ${node.cx},${node.cy + h} ${node.cx - w},${node.cy}`;
+  const glyph = node.gatewayType === 'exclusive' ? 'X' : node.gatewayType === 'parallel' ? '+' : 'O';
+  return `        <g ${focusNodeAttrs(node.id, node.label, gatewayPassport(node), workflow.meta.locale)}>
+          ${focusNodeTitle(node.label, gatewayPassport(node))}
+          <polygon points="${points}" class="${bpmnFill(node)}" stroke-width="2"/>
+          <text x="${node.cx}" y="${node.cy + 3}" class="t-primary" font-size="10" font-weight="700" text-anchor="middle">${glyph}</text>
+          <text data-node-label="" x="${node.cx}" y="${node.cy + h + 13}" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
+        </g>`;
+}
+
+function renderTask(node) {
+  const accent = 't-muted';
   const hasSub = node.sublabel != null && node.sublabel !== '';
   const labelFontSize = fittedNodeFontSize(node.label, brandLabelFitWidth(node, node.width), nodeTextFit.labelPreferred, nodeTextFit.labelMinimum);
   const sublabelFontSize = hasSub
@@ -612,22 +720,56 @@ function renderNode(node) {
   const tag = node.tag
     ? `\n        <text data-detail="fine" x="${node.cx}" y="${node.y + node.height - 12}" class="${accent}" font-size="${fittedNodeFontSize(node.tag, node.width, nodeTextFit.tagPreferred, nodeTextFit.tagMinimum)}" text-anchor="middle">${esc(node.tag)}</text>`
     : '';
-  const brand = renderBrandMark(node, { x: node.x + node.width - 22, y: node.y + 6 });
-  const passport = { kind: node.type, sublabel: node.sublabel, tag: node.tag, context: nodeContext(node), ...brandMetadataFor(node) };
+  const owner = node.owner
+    ? `\n        <text data-detail="context" x="${node.x + node.width / 2}" y="${node.y - 4}" class="t-muted" font-size="7" text-anchor="middle">${esc(node.owner)}</text>`
+    : '';
+  const passport = { kind: node.kind, taskType: node.taskType, owner: node.owner, sublabel: node.sublabel, tag: node.tag, context: nodeContext(node) };
+  const glyph = `\n        <rect x="${node.x + 6}" y="${node.y + 5}" width="14" height="9" rx="2" class="semantic-sigil s-frontend" stroke-width="1"/>
+        <text x="${node.x + 13}" y="${node.y + 12}" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">${taskTypeGlyph(node.taskType)}</text>`;
   return `        <g ${focusNodeAttrs(node.id, node.label, passport, workflow.meta.locale)}>
-          ${focusNodeTitle(node.label, passport)}
-          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="c-mask"/>
-          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="6" class="${fill}"${animateAttr(workflow.meta, 'node', nodeStep(node))} stroke-width="1.5"/>
-          ${renderSemanticSigil(node.type, { x: node.x + 6, y: node.y + 6 })}${brand ? `\n          ${brand}` : ''}
+          ${focusNodeTitle(node.label, passport)}${owner}
+          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8" class="c-mask"/>
+          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8" class="${bpmnFill(node)}"${animateAttr(workflow.meta, 'node', nodeStep(node))} stroke-width="1.5"/>
+${glyph}
           <text data-node-label=""${hasSub ? ' data-detail-anchor=""' : ''} x="${node.cx}" y="${node.y + 26}" class="t-primary" font-size="${labelFontSize}" font-weight="600" text-anchor="middle">${esc(node.label)}</text>${sub}${tag}
         </g>`;
 }
 
+function renderDataObject(node) {
+  const h = node.height;
+  const w = node.width;
+  return `        <g ${focusNodeAttrs(node.id, node.label, { kind: node.kind, context: nodeContext(node) }, workflow.meta.locale)}>
+          ${focusNodeTitle(node.label, { kind: node.kind, context: nodeContext(node) })}
+          <rect x="${node.x}" y="${node.y}" width="${w}" height="${h}" rx="2" class="${bpmnFill(node)}" stroke-width="1.5"/>
+          <path d="M ${node.x + w - 14} ${node.y} v 10 h -14" class="c-mask" stroke-width="1"/>
+          <text data-node-label="" x="${node.cx}" y="${node.cy + 3}" class="t-primary" font-size="9" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
+        </g>`;
+}
+
+function eventPassport(node) {
+  return { kind: 'event', eventType: node.eventType, trigger: node.trigger, context: nodeContext(node) };
+}
+
+function gatewayPassport(node) {
+  return { kind: 'gateway', gatewayType: node.gatewayType, context: nodeContext(node) };
+}
+
+function renderNode(node) {
+  if (node.kind === 'event') return renderEvent(node);
+  if (node.kind === 'gateway') return renderGateway(node);
+  if (node.kind === 'dataObject') return renderDataObject(node);
+  return renderTask(node);
+}
+
 function renderEdgePath(edge, index) {
-  const [cls, marker] = arrowClassMap[edge.variant || 'default'] || arrowClassMap.default;
+  const isMessage = edge.kind === 'message';
+  const [cls, marker] = isMessage
+    ? (arrowClassMap.dashed || arrowClassMap.default)
+    : (arrowClassMap[edge.variant || 'default'] || arrowClassMap.default);
   const routed = pathFor(edge);
-  const strokeWidth = edge.width || (edge.variant === 'emphasis' ? 1.8 : 1.4);
-  return `        <path ${focusEdgeAttrs(edge.from, edge.to, edge.label, index, edge.id)} data-composition-points="${routePointsValue(routed.points)}" d="${routed.d}" class="${cls}"${animateAttr(workflow.meta, 'edge', edgeSteps.get(edge))} stroke-width="${strokeWidth}" marker-end="url(#${marker})"/>`;
+  const strokeWidth = edge.width || (edge.variant === 'emphasis' || isMessage ? 1.8 : 1.4);
+  const dash = isMessage ? ' stroke-dasharray="6 4"' : '';
+  return `        <path ${focusEdgeAttrs(edge.from, edge.to, edge.label, index, edge.id)} data-composition-points="${routePointsValue(routed.points)}" data-edge-kind="${edge.kind || 'sequence'}" d="${routed.d}" class="${cls}"${animateAttr(workflow.meta, 'edge', edgeSteps.get(edge))} stroke-width="${strokeWidth}" marker-end="url(#${marker})"${dash}/>`;
 }
 
 function renderEdgeLabel(edge, index) {
@@ -642,17 +784,21 @@ function renderEdgeLabel(edge, index) {
 }
 
 const LEGEND_CATALOG = [
-  'frontend',
-  'backend',
-  'security',
-  'messagebus',
-  'database',
-  'cloud',
-  'external',
-].map((kind) => ({ kind, label: i18nText(workflow.meta.locale, `legend.workflow.${kind}`) }));
+  { kind: 'event', label: i18nText(workflow.meta.locale, 'legend.workflow.frontend') || 'Event' },
+  { kind: 'task', label: i18nText(workflow.meta.locale, 'legend.workflow.backend') || 'Task' },
+  { kind: 'gateway', label: i18nText(workflow.meta.locale, 'legend.workflow.cloud') || 'Gateway' },
+  { kind: 'dataObject', label: i18nText(workflow.meta.locale, 'legend.workflow.database') || 'Data' },
+];
+
+function legendFill(kind) {
+  if (kind === 'event') return 'c-backend';
+  if (kind === 'gateway') return 'c-cloud';
+  if (kind === 'dataObject') return 'c-database';
+  return 'c-mask';
+}
 
 function renderLegend() {
-  const presentKinds = new Set([...nodes.values()].map((node) => node.type));
+  const presentKinds = new Set([...nodes.values()].map((node) => node.kind));
   const entries = resolveLegend(workflow.meta?.legend, LEGEND_CATALOG, presentKinds);
   return renderResolvedLegend({
     entries,
@@ -667,7 +813,7 @@ function renderLegend() {
       unfit: workflow.meta?.legend === undefined ? 'hide' : 'error',
       diagramType: 'workflow',
     },
-    renderSwatch: (entry) => `<rect x="${entry.x}" y="${entry.baseline - 8}" width="14" height="9" rx="2" class="${componentFill[entry.kind] || 'c-external'}" stroke-width="1"/>`,
+    renderSwatch: (entry) => `<rect x="${entry.x}" y="${entry.baseline - 8}" width="14" height="9" rx="2" class="${legendFill(entry.kind)}" stroke-width="1"/>`,
   });
 }
 
