@@ -10,7 +10,7 @@ import {
   parseSemver,
   validateLocalRelease,
   validateStableUpdateManifest,
-} from '../archify/scripts/update-contract.mjs';
+} from '../flowforge/scripts/update-contract.mjs';
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const rootFlag = process.argv.indexOf('--root');
@@ -49,7 +49,7 @@ function checkSkillRelease(value, version, isDevelopment) {
   } catch {
     // Report the repository-specific cross-artifact requirement below.
   }
-  fail(`archify/skill-release.json must identify archify ${version} as ${expectedChannel}, use the official repository, and pin the trusted update manifest URL.`);
+  fail(`flowforge/skill-release.json must identify flowforge ${version} as ${expectedChannel}, use the official repository, and pin the trusted update manifest URL.`);
 }
 
 function checkStableUpdateManifest(value, expectedVersion, previousVersion, packageVersion, isDevelopment) {
@@ -66,7 +66,7 @@ function checkStableUpdateManifest(value, expectedVersion, previousVersion, pack
   const releaseWindow = !isDevelopment && previousVersion
     ? `newest stable v${expectedVersion} or immediate prior v${previousVersion} during the enforced post-Release publication window`
     : `newest published stable v${expectedVersion || '(missing)'}`;
-  fail(`docs/skill-updates/archify/stable.json must describe the ${releaseWindow} with the fixed repository, immutable tree/archive digests, and official release-notes URL.`);
+  fail(`docs/skill-updates/flowforge/stable.json must describe the ${releaseWindow} with the fixed repository, immutable tree/archive digests, and official release-notes URL.`);
 }
 
 function shieldEscape(value) {
@@ -103,7 +103,7 @@ function checkDocument(relativePath, source, version, isDevelopment) {
 
 function checkRavenBoundary(relativePath, source, language) {
   const installParent = String.raw`~\/\.raven\/workspace\/skills`;
-  const installedRoot = `${installParent}\/archify`;
+  const installedRoot = `${installParent}\/flowforge`;
   const pathBoundary = String.raw`(?=$|[\s\x60'"<>,.;:，；。])`;
   const hasEnglishManual = /manual ZIP/i.test(source);
   const hasChineseManual = /(?:手动[^\n<]{0,40}ZIP|ZIP[^\n<]{0,40}手动)/i.test(source);
@@ -111,7 +111,7 @@ function checkRavenBoundary(relativePath, source, language) {
     ? hasEnglishManual && hasChineseManual
     : language === 'zh' ? hasChineseManual : hasEnglishManual;
   const englishExtractsIntoParent = new RegExp(
-    String.raw`(?:extract|unpack)[^\n]{0,180}archify\.zip[^\n]{0,180}(?:into|to)\s*[\x60'"<]*${installParent}${pathBoundary}`,
+    String.raw`(?:extract|unpack)[^\n]{0,180}flowforge\.zip[^\n]{0,180}(?:into|to)\s*[\x60'"<]*${installParent}${pathBoundary}`,
     'i',
   ).test(source);
   const englishExplainsInstalledRoot = new RegExp(
@@ -119,7 +119,7 @@ function checkRavenBoundary(relativePath, source, language) {
     'i',
   ).test(source);
   const chineseExtractsIntoParent = new RegExp(
-    String.raw`archify\.zip[^\n]{0,100}解压(?:到|至)\s*[\x60'"<]*${installParent}${pathBoundary}`,
+    String.raw`flowforge\.zip[^\n]{0,100}解压(?:到|至)\s*[\x60'"<]*${installParent}${pathBoundary}`,
     'i',
   ).test(source);
   const chineseExplainsInstalledRoot = new RegExp(
@@ -141,7 +141,7 @@ function checkRavenBoundary(relativePath, source, language) {
     || /[?&]agent=raven\b/i.test(source);
   if (!/Raven/i.test(source) || !hasRequiredCopy || !hasCorrectDestination
     || nestedDestination || inventsSwitcher) {
-    fail(`${relativePath}: Raven must remain a manual ZIP installation outside the agent switcher: extract archify.zip into ~/.raven/workspace/skills, yielding ~/.raven/workspace/skills/archify.`);
+    fail(`${relativePath}: Raven must remain a manual ZIP installation outside the agent switcher: extract flowforge.zip into ~/.raven/workspace/skills, yielding ~/.raven/workspace/skills/flowforge.`);
   }
 }
 
@@ -151,8 +151,8 @@ function checkIdentityTemplate(relativePath, source, isDevelopment) {
   const hasIdentity = isDevelopment
     ? /development/i.test(source) && /开发版/.test(source)
     : /stable/i.test(source) && /稳定版/.test(source);
-  if (!source.includes('[[ARCHIFY_VERSION]]') || !hasIdentity || hasHardcodedVersion) {
-    fail(`${relativePath} must use [[ARCHIFY_VERSION]] with ${identity} labels, never a hardcoded package version.`);
+  if (!source.includes('[[FLOWFORGE_VERSION]]') || !hasIdentity || hasHardcodedVersion) {
+    fail(`${relativePath} must use [[FLOWFORGE_VERSION]] with ${identity} labels, never a hardcoded package version.`);
   }
 }
 
@@ -164,7 +164,7 @@ function checkRoadmap(relativePath, source, version, isDevelopment) {
   }
 }
 
-const packageJson = readJson('archify/package.json');
+const packageJson = readJson('flowforge/package.json');
 const changelog = read('CHANGELOG.md');
 const unreleasedStart = changelog.search(/^## \[Unreleased\][^\n]*(?:\n|$)/m);
 const afterUnreleased = unreleasedStart === -1
@@ -212,32 +212,32 @@ if (hasSupportedVersion && hasRealUnreleasedChanges) {
 }
 
 if (hasSupportedVersion) {
-  checkSkillRelease(readJson('archify/skill-release.json'), version, isDevelopment);
+  checkSkillRelease(readJson('flowforge/skill-release.json'), version, isDevelopment);
   checkStableUpdateManifest(
-    readJson('docs/skill-updates/archify/stable.json'),
+    readJson('docs/skill-updates/flowforge/stable.json'),
     newestStableLabel,
     previousStableLabel,
     version,
     isDevelopment,
   );
 
-  const lock = readJson('archify/package-lock.json');
+  const lock = readJson('flowforge/package-lock.json');
   if (lock.version !== version || lock.packages?.['']?.version !== version) {
-    fail(`archify/package-lock.json must match ${version} at the root and packages[""].`);
+    fail(`flowforge/package-lock.json must match ${version} at the root and packages[""].`);
   }
 
-  const skill = read('archify/SKILL.md');
+  const skill = read('flowforge/SKILL.md');
   const skillVersion = skill.match(/^\s*version:\s*["']?([^"'\s]+)["']?\s*$/m)?.[1];
   const expectedSkillVersion = `${parsedVersion.core[0]}.${parsedVersion.core[1]}`;
   if (skillVersion !== expectedSkillVersion) {
-    fail(`archify/SKILL.md metadata version ${skillVersion || '(missing)'} must map to package ${version} as ${expectedSkillVersion}.`);
+    fail(`flowforge/SKILL.md metadata version ${skillVersion || '(missing)'} must map to package ${version} as ${expectedSkillVersion}.`);
   }
 
-  const rendererTemplate = read('archify/assets/template.html');
-  const generatorVersions = [...rendererTemplate.matchAll(/<meta\s+name="generator"\s+content="archify\s+([^"]+)"\s*\/?>/g)]
+  const rendererTemplate = read('flowforge/assets/template.html');
+  const generatorVersions = [...rendererTemplate.matchAll(/<meta\s+name="generator"\s+content="flowforge\s+([^"]+)"\s*\/?>/g)]
     .map((match) => match[1]);
   if (generatorVersions.length !== 1 || generatorVersions[0] !== version) {
-    fail(`archify/assets/template.html generator must be archify ${version}; found ${generatorVersions.join(', ') || '(missing)'}.`);
+    fail(`flowforge/assets/template.html generator must be flowforge ${version}; found ${generatorVersions.join(', ') || '(missing)'}.`);
   }
 
   const english = read('README.md');
@@ -253,8 +253,8 @@ if (hasSupportedVersion) {
 
   if (newestStableLabel && isDevelopment) {
     const stableMinor = newestStableLabel.split('.').slice(0, 2).join('\\.');
-    if (new RegExp(`Archify ${stableMinor} includes\\b`).test(english)
-      || new RegExp(`Archify ${stableMinor} 已覆盖`).test(chinese)) {
+    if (new RegExp(`FlowForge ${stableMinor} includes\\b`).test(english)
+      || new RegExp(`FlowForge ${stableMinor} 已覆盖`).test(chinese)) {
       fail(`README capability summary must describe v${version} as development, not published ${newestStableLabel}.`);
     }
   }

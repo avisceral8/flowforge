@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "diagram_type": "infoflow",
+  "meta": {
+    "title": "Order-to-Cash infoflow",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Order to payment",
+        "focus": ["order", "check", "ship", "pay"],
+        "note": "Follow a clean order from receipt through payment."
+      }
+    ],
+    "output": "examples/order-to-cash.infoflow-rendered.html",
+    "viewBox": [720, 320]
+  },
+  "lanes": [
+    { "id": "process", "label": "Order-to-Cash" }
+  ],
+  "mainPath": ["order", "check", "ship", "pay"],
+  "nodes": [
+    { "id": "order", "lane": "process", "col": 0, "type": "frontend", "label": "Order" },
+    { "id": "check", "lane": "process", "col": 1, "type": "security", "label": "Check" },
+    { "id": "ship", "lane": "process", "col": 3, "type": "messagebus", "label": "Ship" },
+    { "id": "pay", "lane": "process", "col": 5, "type": "backend", "label": "Pay" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "order", "to": "check" },
+    { "id": "e2", "from": "check", "to": "ship" },
+    { "id": "e3", "from": "ship", "to": "pay" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "BPMN Process Rules",
+      "items": [
+        "One start per entry lane",
+        "Gateways have labeled branches",
+        "Cross-lane handoffs are sequence flows"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "Auditors can follow the money path",
+        "The map regenerates when the process changes"
+      ]
+    }
+  ]
+}

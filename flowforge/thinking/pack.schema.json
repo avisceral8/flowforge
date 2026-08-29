@@ -1,0 +1,19 @@
+{
+  "$id": "https://github.com/flowforge/flowforge/thinking/pack.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "FlowForge thinking pack",
+  "description": "Bundled authoring guidance the agent consults before and while authoring a business diagram. Paraphrased in FlowForge's own words from the MIT-licensed Lenny's Product Skills collection; no verbatim quotes redistributed.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack_version", "id", "label", "description", "attribution", "sources", "questions", "checks"],
+  "properties": {
+    "pack_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9]{2,23}$" },
+    "label": { "type": "string", "minLength": 3, "maxLength": 48 },
+    "description": { "type": "string", "minLength": 10, "maxLength": 220 },
+    "attribution": { "type": "string", "minLength": 10 },
+    "sources": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "questions": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+    "checks": { "type": "array", "minItems": 3, "items": { "type": "string" } }
+  }
+}

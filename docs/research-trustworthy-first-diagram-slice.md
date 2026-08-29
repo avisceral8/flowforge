@@ -1,4 +1,4 @@
-# Archify：可信首次交付的最小实现切片
+# FlowForge：可信首次交付的最小实现切片
 
 > 调研日期：2026-07-22（Asia/Shanghai）
 >
@@ -36,16 +36,16 @@
 
 上述 issue 证据分别见 [#6](https://github.com/tt-a1i/archify/issues/6)、[#22](https://github.com/tt-a1i/archify/issues/22)、[#24](https://github.com/tt-a1i/archify/issues/24)；#24 的维护者定性与 hard-error 选择见[该回复](https://github.com/tt-a1i/archify/issues/24#issuecomment-5029635230)。
 
-## Archify 当前事实基线
+## FlowForge 当前事实基线
 
 ### main 与已有能力
 
 - **事实**：调研时远端 `main` 是 [`6d5204d`](https://github.com/tt-a1i/archify/commit/6d5204d23dfa2cbf3dfff423beeb32250a3dc727)，最新 release / package 版本仍为 `v2.11.0`。
-- **事实**：main 已有共享 `cleanFlowProblems()`，会报告关系集合索引、可选关系 ID、障碍 ID、首个相交 segment、2px clearance 与修复旋钮；但函数在既无环境 profile、又无 IR profile 时立即返回空数组。因此这是**已实现但默认可绕过**的 correctness guard。见 [`geometry.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/renderers/shared/geometry.mjs#L44-L91)。
-- **事实**：architecture renderer 已把 components 作为障碍集合传入 Clean Flow，并有完整 `fromSide` / `toSide` / `route` / `via` 修复提示。见 [`render-architecture.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/renderers/architecture/render-architecture.mjs#L189-L238)。
-- **事实**：architecture `auto` 当前固定选择一个中点 X 的 H-V-H dogleg；它没有比较另一种 dogleg，也没有避障搜索。见 [`render-architecture.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/renderers/architecture/render-architecture.mjs#L294-L329)。
-- **事实**：`validate` 会在临时目录 render，再运行 final HTML checker；成功的 `--json` 返回 `ok`、`checks` 和 `composition`。见 [`bin/archify.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/bin/archify.mjs#L267-L333)。
-- **事实**：当前 SKILL 要求 read-schema -> author IR -> render -> validate -> targeted fix，也明确说明 composition gate 在无 profile 时保持 opt-in；现有 self-review checklist 主要检查 DOM/几何约束，并没有最终像素 readback 状态。见 [`SKILL.md`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/SKILL.md#L73-L81) 与 [`SKILL.md`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/SKILL.md#L326-L343)。
+- **事实**：main 已有共享 `cleanFlowProblems()`，会报告关系集合索引、可选关系 ID、障碍 ID、首个相交 segment、2px clearance 与修复旋钮；但函数在既无环境 profile、又无 IR profile 时立即返回空数组。因此这是**已实现但默认可绕过**的 correctness guard。见 [`geometry.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/renderers/shared/geometry.mjs#L44-L91)。
+- **事实**：architecture renderer 已把 components 作为障碍集合传入 Clean Flow，并有完整 `fromSide` / `toSide` / `route` / `via` 修复提示。见 [`render-architecture.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/renderers/architecture/render-architecture.mjs#L189-L238)。
+- **事实**：architecture `auto` 当前固定选择一个中点 X 的 H-V-H dogleg；它没有比较另一种 dogleg，也没有避障搜索。见 [`render-architecture.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/renderers/architecture/render-architecture.mjs#L294-L329)。
+- **事实**：`validate` 会在临时目录 render，再运行 final HTML checker；成功的 `--json` 返回 `ok`、`checks` 和 `composition`。见 [`bin/flowforge.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/bin/flowforge.mjs#L267-L333)。
+- **事实**：当前 SKILL 要求 read-schema -> author IR -> render -> validate -> targeted fix，也明确说明 composition gate 在无 profile 时保持 opt-in；现有 self-review checklist 主要检查 DOM/几何约束，并没有最终像素 readback 状态。见 [`SKILL.md`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/SKILL.md#L73-L81) 与 [`SKILL.md`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/SKILL.md#L326-L343)。
 - **推断**：因为隐藏在无关节点后会改变读者看到的拓扑，这一条不是“审美偏好”。把它留在 opt-in profile 后面，和其他 profile-less 兼容策略混为一谈了。
 
 ### issues 与 PR 的当前状态
@@ -58,15 +58,15 @@
 #### #14 与 PR #28：CJK 宽度
 
 - **事实**：[#14](https://github.com/tt-a1i/archify/issues/14) 的措辞是 “may be inaccurate” / “likely contributed”；报告者也承认部分 overlap 可能来自坐标放置。它是值得修的 P2，但当前证据没有证明它是 #6 / #22 / #24 的共同根因。
-- **事实**：main 的 `FULLWIDTH_RE` 用一个宽区间覆盖 U+2E80–U+A4CF，并已有 ASCII、Han、混排、补充平面汉字和 emoji 测试。见 [`utils.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/renderers/shared/utils.mjs#L145-L153) 与 [`geometry.test.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/archify/test/geometry.test.mjs#L400-L408)。
+- **事实**：main 的 `FULLWIDTH_RE` 用一个宽区间覆盖 U+2E80–U+A4CF，并已有 ASCII、Han、混排、补充平面汉字和 emoji 测试。见 [`utils.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/renderers/shared/utils.mjs#L145-L153) 与 [`geometry.test.mjs`](https://github.com/tt-a1i/archify/blob/6d5204d23dfa2cbf3dfff423beeb32250a3dc727/flowforge/test/geometry.test.mjs#L400-L408)。
 - **事实**：open 的 [PR #28](https://github.com/tt-a1i/archify/pull/28) 把该宽区间拆成显式 Unicode ranges，并新增 Han、CJK punctuation、fullwidth、Hangul 与混排单测；head `22eb5c8` 当时没有任何 GitHub check run。
-- **事实**：PR #28 的新 ranges 不等价于 main：它漏掉 main 会按双宽处理的 Hiragana `あ` (U+3042)、Katakana `ア` (U+30A2)、Hangul Compatibility Jamo `ㄱ` (U+3131) 和 Katakana Phonetic Extension `ㇰ` (U+31F0)。因此 “all CJK blocks” 的 PR 描述并不成立。改动见 [`utils.mjs@22eb5c8`](https://github.com/tt-a1i/archify/blob/22eb5c84e917c677c17e1d3c22bee63a811225ce/archify/renderers/shared/utils.mjs#L145-L155)，新增测试见 [`geometry.test.mjs@22eb5c8`](https://github.com/tt-a1i/archify/blob/22eb5c84e917c677c17e1d3c22bee63a811225ce/archify/test/geometry.test.mjs#L400-L418)。
+- **事实**：PR #28 的新 ranges 不等价于 main：它漏掉 main 会按双宽处理的 Hiragana `あ` (U+3042)、Katakana `ア` (U+30A2)、Hangul Compatibility Jamo `ㄱ` (U+3131) 和 Katakana Phonetic Extension `ㇰ` (U+31F0)。因此 “all CJK blocks” 的 PR 描述并不成立。改动见 [`utils.mjs@22eb5c8`](https://github.com/tt-a1i/archify/blob/22eb5c84e917c677c17e1d3c22bee63a811225ce/flowforge/renderers/shared/utils.mjs#L145-L155)，新增测试见 [`geometry.test.mjs@22eb5c8`](https://github.com/tt-a1i/archify/blob/22eb5c84e917c677c17e1d3c22bee63a811225ce/flowforge/test/geometry.test.mjs#L400-L418)。
 - **建议**：PR #28 不要原样并入本切片。先补 Kana、Bopomofo / compatibility Jamo 等回归矩阵，并用真实浏览器字体栈的 measured-vs-estimated fixture 证明问题；它应作为独立、可回滚的小修复。
 
 #### #22：多轮打磨消耗 token
 
-- **事实**：[#22](https://github.com/tt-a1i/archify/issues/22) 已按“未发现 Archify renderer / validator 异常 token 消耗”关闭；用户明确说消耗发生在多轮沟通与细节打磨，维护者把主要成本定位到代码探索、模型/客户端与迭代次数。
-- **推断**：Archify 不应该承诺控制模型探索成本，但可以控制自身交付循环不无限扩张：确定性检查优先、针对性修正、两轮上限、无法看图则如实 skipped。
+- **事实**：[#22](https://github.com/tt-a1i/archify/issues/22) 已按“未发现 FlowForge renderer / validator 异常 token 消耗”关闭；用户明确说消耗发生在多轮沟通与细节打磨，维护者把主要成本定位到代码探索、模型/客户端与迭代次数。
+- **推断**：FlowForge 不应该承诺控制模型探索成本，但可以控制自身交付循环不无限扩张：确定性检查优先、针对性修正、两轮上限、无法看图则如实 skipped。
 
 #### #24 与 PR #30：静默错误拓扑
 
@@ -141,10 +141,10 @@
 
 **明确不借鉴**
 
-- 不用 Mermaid / ELK 替换 Archify 的 typed renderer 与 exact geometry。
+- 不用 Mermaid / ELK 替换 FlowForge 的 typed renderer 与 exact geometry。
 - 不引入 R2、Redis、quota、provider、SSE 或 web persistence。
-- 不原样照搬 34-node / 48-edge 上限；Archify 的复杂度预算应按 diagram type / profile 校准。
-- 不在本轮给所有 Archify schema 新增 source-path 字段；这会把一个可小步验证的交付门扩大为跨五类 IR 的 provenance 迁移。
+- 不原样照搬 34-node / 48-edge 上限；FlowForge 的复杂度预算应按 diagram type / profile 校准。
+- 不在本轮给所有 FlowForge schema 新增 source-path 字段；这会把一个可小步验证的交付门扩大为跨五类 IR 的 provenance 迁移。
 
 ## 建议实现边界
 
@@ -167,7 +167,7 @@
 
 ### 必须自动化
 
-1. **共享单测**：无 `profile`、无 `ARCHIFY_QUALITY_PROFILE` 时，relationship 穿过无关节点仍返回一条 `clean-flow/edge-through-node`；source / target boxes 仍豁免。
+1. **共享单测**：无 `profile`、无 `FLOWFORGE_QUALITY_PROFILE` 时，relationship 穿过无关节点仍返回一条 `clean-flow/edge-through-node`；source / target boxes 仍豁免。
 2. **#24 exact regression**：使用 issue 中 3 components / 1 auto connection，省略 `quality_profile`：
    - `render` 与 `validate` 必须 non-zero；
    - stderr 必须包含 diagram type、`connections[0]`、`api -> queue`、`cache`、首个 segment、2px clearance 与 `fromSide` / `toSide` / `via` 修复提示；
@@ -175,8 +175,8 @@
 3. **边界保护**：profile-less 的 unrelated proper X crossing、route rhythm 等仍按原 compatibility 语义处理；本轮只能把 edge-through-node 升为 universal correctness failure。
 4. **五 renderer 语义保护**：现有 workflow / architecture / dataflow / lifecycle Clean Flow fixtures 全绿；sequence lifeline、activation、segment 与各种 container 仍保持 intentional pass-through。
 5. **交付契约测试**：锁定 SKILL 中 deterministic-first、最终像素检查、最多 2 轮、每轮重跑、`passed` / `skipped`、真实 correction count，以及“vision 不得覆盖 deterministic failure”。
-6. 在 `archify/` 运行 `npm test`。
-7. 因 `SKILL.md` 是发布物，运行 `scripts/build-zip.sh /tmp/fresh.zip`，将解压内容与 `archify.zip` 比较；准备发布时重建并提交 archive，不能只改源码树。
+6. 在 `flowforge/` 运行 `npm test`。
+7. 因 `SKILL.md` 是发布物，运行 `scripts/build-zip.sh /tmp/fresh.zip`，将解压内容与 `flowforge.zip` 比较；准备发布时重建并提交 archive，不能只改源码树。
 
 ### 必须人工 / agent 视觉验收
 

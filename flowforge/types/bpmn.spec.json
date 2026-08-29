@@ -1,0 +1,27 @@
+{
+  "spec_version": 1,
+  "id": "bpmn",
+  "label": "Business process map",
+  "description": "Approvals, handoffs, order-to-cash, onboarding, and incident processes with owners at every step.",
+  "renderer": "render-bpmn.mjs",
+  "schema": "bpmn.schema.json",
+  "layout": "lanes",
+  "guideKeywords": [
+    "process",
+    "workflow",
+    "approval",
+    "handoff",
+    "escalation",
+    "runbook",
+    "ons"
+  ],
+  "conditions": {
+    "signals": [
+      "approval gate",
+      "handoff between teams",
+      "step-by-step workflow"
+    ],
+    "useWhen": "you need a time-ordered process with named owners and audit-visible controls",
+    "avoidWhen": "you are drawing a static org chart or a customer-emotion journey"
+  }
+}

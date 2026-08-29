@@ -1,0 +1,27 @@
+{
+  "spec_version": 1,
+  "id": "capability",
+  "label": "Capability / operating model",
+  "description": "Teams, capabilities, systems, and vendors in an operating model.",
+  "renderer": "render-capability.mjs",
+  "schema": "capability.schema.json",
+  "layout": "overview",
+  "guideKeywords": [
+    "capability",
+    "operating model",
+    "departments",
+    "systems",
+    "vendors"
+  ],
+  "conditions": {
+    "signals": [
+      "operating model",
+      "departments",
+      "capabilities",
+      "systems",
+      "vendors"
+    ],
+    "useWhen": "static structure and ownership matter more than time order",
+    "avoidWhen": "you are mapping a step-by-step flow"
+  }
+}

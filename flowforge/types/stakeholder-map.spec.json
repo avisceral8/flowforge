@@ -1,0 +1,25 @@
+{
+  "spec_version": 1,
+  "id": "stakeholder-map",
+  "label": "Stakeholder map",
+  "description": "Who matters, how they relate, and where influence concentrates.",
+  "renderer": "render-stakeholder-map.mjs",
+  "schema": "stakeholder-map.schema.json",
+  "layout": "overview",
+  "guideKeywords": [
+    "stakeholder",
+    "influence",
+    "actors",
+    "who matters"
+  ],
+  "conditions": {
+    "signals": [
+      "stakeholders",
+      "influence",
+      "actors",
+      "alignment"
+    ],
+    "useWhen": "relationships and influence between people or groups matter",
+    "avoidWhen": "you need a time-ordered customer experience"
+  }
+}

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FlowForge Delta — Order-to-Cash Process → Order-to-Cash Process v2</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { font: 15px/1.5 system-ui, sans-serif; max-width: 860px; margin: 2rem auto; padding: 0 1.25rem; color: #0f172a; background: #f8fafc; }
+  @media (prefers-color-scheme: dark) { body { color: #e2e8f0; background: #020617; } }
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.1rem; margin-top: 2rem; }
+  table { border-collapse: collapse; width: 100%; }
+  td, th { border: 1px solid #94a3b8; padding: 0.4rem 0.6rem; text-align: left; vertical-align: top; }
+  .count { text-align: right; }
+  .muted { opacity: 0.65; }
+  code { font: 12px/1.4 ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<h1>FlowForge — Process Version Delta</h1>
+<p><strong>Order-to-Cash Process</strong> → <strong>Order-to-Cash Process v2</strong></p>
+<h2>Summary</h2>
+<table>
+  <tr><td>Nodes added</td><td class="count">1</td></tr>
+  <tr><td>Nodes removed</td><td class="count">1</td></tr>
+  
+  
+  
+  
+  
+  <tr><td>Edges changed</td><td class="count">3</td></tr>
+  
+  <tr><td><strong>Total facts</strong></td><td class="count"><strong>5</strong></td></tr>
+</table>
+<h2>Added nodes</h2><ul><li><code>verify</code> — Verify</li></ul>
+<h2>Removed nodes</h2><ul><li><code>check</code> — Check</li></ul>
+
+
+
+
+<p class="muted">Machine receipt: {&quot;schemaVersion&quot;:1,&quot;type&quot;:&quot;bpmn-delta&quot;,&quot;base&quot;:{&quot;title&quot;:&quot;Order-to-Cash Process&quot;},&quot;head&quot;:{&quot;title&quot;:&quot;Order-to-Cash Process v2&quot;},&quot;added&quot;:{&quot;nodes&quot;:[{&quot;id&quot;:&quot;verify&quot;,&quot;lane&quot;:&quot;process&quot;,&quot;col&quot;:1,&quot;type&quot;:&quot;security&quot;,&quot;label&quot;:&quot;Verify&quot;}],&quot;lanes&quot;:[],&quot;edges&quot;:[]},&quot;removed&quot;:{&quot;nodes&quot;:[{&quot;id&quot;:&quot;check&quot;,&quot;lane&quot;:&quot;process&quot;,&quot;col&quot;:1,&quot;type&quot;:&quot;security&quot;,&quot;label&quot;:&quot;Check&quot;}],&quot;lanes&quot;:[],&quot;edges&quot;:[]},&quot;changed&quot;:{&quot;nodes&quot;:[],&quot;lanes&quot;:[],&quot;edges&quot;:[{&quot;id&quot;:&quot;e1&quot;,&quot;fieldChanges&quot;:[&quot;to&quot;],&quot;before&quot;:{&quot;id&quot;:&quot;e1&quot;,&quot;from&quot;:&quot;order&quot;,&quot;to&quot;:&quot;check&quot;},&quot;after&quot;:{&quot;id&quot;:&quot;e1&quot;,&quot;from&quot;:&quot;order&quot;,&quot;to&quot;:&quot;verify&quot;}},{&quot;id&quot;:&quot;e2&quot;,&quot;fieldChanges&quot;:[&quot;from&quot;],&quot;before&quot;:{&quot;id&quot;:&quot;e2&quot;,&quot;from&quot;:&quot;check&quot;,&quot;to&quot;:&quot;ship&quot;},&quot;after&quot;:{&quot;id&quot;:&quot;e2&quot;,&quot;from&quot;:&quot;verify&quot;,&quot;to&quot;:&quot;ship&quot;}},{&quot;id&quot;:&quot;e3&quot;,&quot;fieldChanges&quot;:[&quot;label&quot;],&quot;before&quot;:{&quot;id&quot;:&quot;e3&quot;,&quot;from&quot;:&quot;ship&quot;,&quot;to&quot;:&quot;pay&quot;},&quot;after&quot;:{&quot;id&quot;:&quot;e3&quot;,&quot;from&quot;:&quot;ship&quot;,&quot;to&quot;:&quot;pay&quot;,&quot;label&quot;:&quot;shipped&quot;}}]},&quot;rerouted&quot;:[]}</p>
+</body>
+</html>

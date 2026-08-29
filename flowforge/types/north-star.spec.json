@@ -1,0 +1,24 @@
+{
+  "spec_version": 1,
+  "id": "north-star",
+  "label": "North-star metric tree",
+  "description": "A single north-star metric decomposed into its inputs.",
+  "renderer": "render-north-star.mjs",
+  "schema": "north-star.schema.json",
+  "layout": "overview",
+  "guideKeywords": [
+    "north star",
+    "metric tree",
+    "north-star metric",
+    "inputs"
+  ],
+  "conditions": {
+    "signals": [
+      "north star",
+      "metric tree",
+      "input metrics"
+    ],
+    "useWhen": "you are decomposing one metric into controllable inputs",
+    "avoidWhen": "you are drawing a process or journey"
+  }
+}

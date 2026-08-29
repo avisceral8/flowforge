@@ -9,7 +9,7 @@ import { spawnCliSync } from './resolve-cli.mjs';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const integrationRoot = path.resolve(here, '..');
 const repoRoot = path.resolve(integrationRoot, '..', '..');
-const DSH_RELEASE_REF = 'archify-dsh-v0.1.0';
+const DSH_RELEASE_REF = 'flowforge-dsh-v0.1.0';
 
 function argValue(flag) {
   const index = process.argv.indexOf(flag);
@@ -65,7 +65,7 @@ function regularFiles(root, directory = root) {
   return files;
 }
 
-function stageCleanArchify(sourceRoot, dest) {
+function stageCleanFlowForge(sourceRoot, dest) {
   const validators = path.join(sourceRoot, 'renderers/shared/generated-validators.mjs');
   if (!fs.existsSync(validators)) {
     throw new Error(`generated validators are missing from ${DSH_RELEASE_REF}`);
@@ -86,13 +86,13 @@ function stageCleanArchify(sourceRoot, dest) {
 
 const json = process.argv.includes('--json');
 const out = argValue('--out');
-const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-dsh-pack-'));
-const snapshot = fs.mkdtempSync(path.join(os.tmpdir(), 'archify-dsh-source-'));
+const stage = fs.mkdtempSync(path.join(os.tmpdir(), 'flowforge-dsh-pack-'));
+const snapshot = fs.mkdtempSync(path.join(os.tmpdir(), 'flowforge-dsh-source-'));
 
 try {
   releaseSnapshot(snapshot);
   const releaseIntegration = path.join(snapshot, 'integrations', 'deepseek-harness');
-  stageCleanArchify(path.join(snapshot, 'archify'), path.join(stage, 'skills', 'archify'));
+  stageCleanFlowForge(path.join(snapshot, 'flowforge'), path.join(stage, 'skills', 'flowforge'));
   fs.copyFileSync(path.join(releaseIntegration, 'package.json'), path.join(stage, 'package.json'));
   fs.copyFileSync(path.join(releaseIntegration, 'cordis.patch.yml'), path.join(stage, 'cordis.patch.yml'));
   fs.cpSync(path.join(releaseIntegration, 'lib'), path.join(stage, 'lib'), { recursive: true });

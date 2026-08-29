@@ -1,0 +1,26 @@
+{
+  "pack_version": 1,
+  "id": "discovery",
+  "label": "Discovery interview",
+  "description": "Eliciting a complete process from a domain expert before authoring IR.",
+  "attribution": "Distilled in FlowForge's own words from Lenny's Product Skills v2.0 (MIT) by Refound AI \u2014 github.com/refoundai/lenny-skills.",
+  "sources": [
+    "continuous-discovery",
+    "customer-interviews",
+    "analyzing-user-feedback"
+  ],
+  "questions": [
+    "Who touches this process, and which roles always act together?",
+    "What starts it, and what does 'done' look like?",
+    "Walk me through the last time this actually ran, step by step.",
+    "Where does it branch, and what goes wrong at each branch?",
+    "Where does work cross from one role to another \u2014 and what documents or payments move separately?"
+  ],
+  "checks": [
+    "Every actor is a lane",
+    "Trigger and every end outcome are captured",
+    "Happy path comes from the last actual run, not the ideal",
+    "Every gateway branch has a label",
+    "No orphan branches or steps with unnamed owners"
+  ]
+}

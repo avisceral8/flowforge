@@ -1,0 +1,25 @@
+{
+  "spec_version": 1,
+  "id": "okr-tree",
+  "label": "OKR tree",
+  "description": "Objectives and key results cascading from a company goal.",
+  "renderer": "render-okr-tree.mjs",
+  "schema": "okr-tree.schema.json",
+  "layout": "overview",
+  "guideKeywords": [
+    "okr",
+    "objectives",
+    "key results",
+    "goals"
+  ],
+  "conditions": {
+    "signals": [
+      "okr",
+      "objectives",
+      "key results",
+      "company goals"
+    ],
+    "useWhen": "you are decomposing objectives into measurable key results",
+    "avoidWhen": "you are documenting a business process"
+  }
+}

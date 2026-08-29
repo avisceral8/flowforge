@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "type": "bpmn-delta",
+  "base": {
+    "title": "Order-to-Cash Process"
+  },
+  "head": {
+    "title": "Order-to-Cash Process v2"
+  },
+  "added": {
+    "nodes": [
+      {
+        "id": "verify",
+        "lane": "process",
+        "col": 1,
+        "type": "security",
+        "label": "Verify"
+      }
+    ],
+    "lanes": [],
+    "edges": []
+  },
+  "removed": {
+    "nodes": [
+      {
+        "id": "check",
+        "lane": "process",
+        "col": 1,
+        "type": "security",
+        "label": "Check"
+      }
+    ],
+    "lanes": [],
+    "edges": []
+  },
+  "changed": {
+    "nodes": [],
+    "lanes": [],
+    "edges": [
+      {
+        "id": "e1",
+        "fieldChanges": [
+          "to"
+        ],
+        "before": {
+          "id": "e1",
+          "from": "order",
+          "to": "check"
+        },
+        "after": {
+          "id": "e1",
+          "from": "order",
+          "to": "verify"
+        }
+      },
+      {
+        "id": "e2",
+        "fieldChanges": [
+          "from"
+        ],
+        "before": {
+          "id": "e2",
+          "from": "check",
+          "to": "ship"
+        },
+        "after": {
+          "id": "e2",
+          "from": "verify",
+          "to": "ship"
+        }
+      },
+      {
+        "id": "e3",
+        "fieldChanges": [
+          "label"
+        ],
+        "before": {
+          "id": "e3",
+          "from": "ship",
+          "to": "pay"
+        },
+        "after": {
+          "id": "e3",
+          "from": "ship",
+          "to": "pay",
+          "label": "shipped"
+        }
+      }
+    ]
+  },
+  "rerouted": []
+}

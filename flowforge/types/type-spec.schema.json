@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/flowforge/flowforge/types/type-spec.schema.json",
+  "title": "FlowForge Diagram Type Spec",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["spec_version", "id", "label", "description", "renderer", "schema", "layout", "conditions"],
+  "properties": {
+    "spec_version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{2,30}$" },
+    "label": { "type": "string", "minLength": 3, "maxLength": 48 },
+    "description": { "type": "string", "minLength": 15, "maxLength": 200 },
+    "renderer": { "type": "string", "pattern": "^[a-z][a-z0-9-]*\\.mjs$" },
+    "schema": { "type": "string", "pattern": "^[a-z][a-z0-9-]*\\.schema\\.json$" },
+    "layout": { "enum": ["lanes", "sequence", "flow", "overview", "states"] },
+    "guideKeywords": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "conditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["signals", "useWhen", "avoidWhen"],
+      "properties": {
+        "signals": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "useWhen": { "type": "string", "minLength": 10 },
+        "avoidWhen": { "type": "string", "minLength": 10 }
+      }
+    }
+  }
+}

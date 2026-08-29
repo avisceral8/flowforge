@@ -1,0 +1,26 @@
+{
+  "spec_version": 1,
+  "id": "growth-loop",
+  "label": "Growth loop",
+  "description": "Acquisition, activation, retention, and revenue as a compounding loop.",
+  "renderer": "render-growth-loop.mjs",
+  "schema": "growth-loop.schema.json",
+  "layout": "flow",
+  "guideKeywords": [
+    "growth loop",
+    "growth",
+    "loop",
+    "funnel"
+  ],
+  "conditions": {
+    "signals": [
+      "growth loop",
+      "compounding",
+      "acquisition",
+      "activation",
+      "retention"
+    ],
+    "useWhen": "you are modeling a compounding growth loop",
+    "avoidWhen": "you are documenting a linear process"
+  }
+}

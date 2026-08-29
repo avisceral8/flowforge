@@ -1,0 +1,22 @@
+{
+  "pack_version": 1,
+  "id": "reconciliation",
+  "label": "Reconciliation",
+  "description": "Resolving conflicting accounts of the same process into one map.",
+  "attribution": "Distilled in FlowForge's own words from Lenny's Product Skills v2.0 (MIT) by Refound AI \u2014 github.com/refoundai/lenny-skills.",
+  "sources": [
+    "analyzing-user-feedback",
+    "stakeholder-alignment"
+  ],
+  "questions": [
+    "Where do the two accounts disagree \u2014 owner, order, decision, or outcome?",
+    "What does each stakeholder believe happens at the disputed step?",
+    "What evidence or artifact would settle the disagreement?",
+    "Who must sign off on the reconciled version?"
+  ],
+  "checks": [
+    "One numbered story, not two maps",
+    "The disputed step is called out explicitly",
+    "Both stakeholders confirm the reconciled story"
+  ]
+}

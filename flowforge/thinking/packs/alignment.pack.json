@@ -1,0 +1,23 @@
+{
+  "pack_version": 1,
+  "id": "alignment",
+  "label": "Alignment & sign-off",
+  "description": "Pre-wiring review so the map passes a stakeholder or auditor.",
+  "attribution": "Distilled in FlowForge's own words from Lenny's Product Skills v2.0 (MIT) by Refound AI \u2014 github.com/refoundai/lenny-skills.",
+  "sources": [
+    "stakeholder-alignment",
+    "executive-communication",
+    "writing-prds"
+  ],
+  "questions": [
+    "Who is this map for \u2014 an auditor, a new hire, or a process owner?",
+    "Who must approve the happy path before it's final?",
+    "What would make the audience reject the map?"
+  ],
+  "checks": [
+    "Audience is named before authoring",
+    "Every step names an owner",
+    "Money or compliance gates are visible",
+    "The map would survive one audit question"
+  ]
+}

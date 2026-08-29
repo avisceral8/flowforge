@@ -1,0 +1,24 @@
+{
+  "spec_version": 1,
+  "id": "launch-plan",
+  "label": "Launch plan",
+  "description": "A product launch as phases, owners, and dependencies.",
+  "renderer": "render-launch-plan.mjs",
+  "schema": "launch-plan.schema.json",
+  "layout": "sequence",
+  "guideKeywords": [
+    "launch plan",
+    "launch",
+    "gaccs",
+    "go to market"
+  ],
+  "conditions": {
+    "signals": [
+      "launch planning",
+      "go to market",
+      "gaccs"
+    ],
+    "useWhen": "you are planning and sequencing a launch",
+    "avoidWhen": "you are mapping an existing business process"
+  }
+}

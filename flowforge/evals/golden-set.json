@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "name": "flowforge-authoring-golden-set",
+  "cases": [
+    {
+      "id": "expense-approval",
+      "prompt": "Map our expense approval process. Employees submit expenses, their manager approves up to $500, finance pays and audits.",
+      "expected": {
+        "type": "bpmn",
+        "lanes": ["employee", "manager", "finance"],
+        "gateway": "amount-threshold",
+        "endEvents": ["paid", "rejected"]
+      }
+    },
+    {
+      "id": "order-to-cash",
+      "prompt": "Map order-to-cash. Sales takes the order, finance checks credit, fulfillment ships, finance invoices and collects.",
+      "expected": {
+        "type": "bpmn",
+        "lanes": ["sales", "finance", "fulfillment"],
+        "gateway": "credit-check",
+        "endEvents": ["collected"]
+      }
+    },
+    {
+      "id": "support-escalation",
+      "prompt": "Map support escalation. Customer reports an issue, support triages, high severity goes to engineering, otherwise support fixes it.",
+      "expected": {
+        "type": "bpmn",
+        "lanes": ["customer", "support", "engineering"],
+        "gateway": "severity",
+        "endEvents": ["resolved", "escalated"]
+      }
+    }
+  ]
+}

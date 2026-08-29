@@ -1,0 +1,27 @@
+{
+  "spec_version": 1,
+  "id": "infoflow",
+  "label": "Information / document flow",
+  "description": "Who creates, sends, approves, and stores records, with compliance boundaries.",
+  "renderer": "render-infoflow.mjs",
+  "schema": "infoflow.schema.json",
+  "layout": "flow",
+  "guideKeywords": [
+    "infoflow",
+    "data lineage",
+    "documents",
+    "records",
+    "compliance"
+  ],
+  "conditions": {
+    "signals": [
+      "data flow",
+      "document flow",
+      "lineage",
+      "compliance boundary",
+      "who creates"
+    ],
+    "useWhen": "document and data lineage with ownership and boundaries matters",
+    "avoidWhen": "you mostly need a time-ordered process with gateways"
+  }
+}

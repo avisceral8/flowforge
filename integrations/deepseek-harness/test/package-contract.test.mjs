@@ -52,22 +52,22 @@ test('publishable manifest is @tt-a1i/archify-dsh@0.1.0 with a DSH bundle patch 
 test('bundle patch inserts one uniquely named filesystem Skill provider resolved from the installed package', () => {
   const patch = fs.readFileSync(path.join(integrationRoot, 'cordis.patch.yml'), 'utf8');
   assert.match(patch, /^- insert:/m);
-  assert.match(patch, /id:\s*archify-skill-filesystem/);
+  assert.match(patch, /id:\s*flowforge-skill-filesystem/);
   assert.match(patch, /name:\s*'@deepseek-ai\/dsh-skill-filesystem'/);
-  assert.match(patch, /providerName:\s*archify-plugin/);
+  assert.match(patch, /providerName:\s*flowforge-plugin/);
   assert.match(patch, /includeDefaultRoots:\s*false/);
   assert.match(patch, /bundledSkillDir:\s*!!js/);
   assert.doesNotMatch(patch, /customSkillDirs/);
   assert.match(
     patch,
-    /createRequire\(baseUrl\)\.resolve\('@tt-a1i\/archify-dsh\/package\.json'\)/,
+    /createRequire\(baseUrl\)\.resolve\('@tt-a1i\/flowforge-dsh\/package\.json'\)/,
   );
   assert.doesNotMatch(patch, /new URL\(\s*['"]skills\//);
-  assert.doesNotMatch(patch, /archify_render|archify_deliver|dsh\.client|ui-deliverables/);
+  assert.doesNotMatch(patch, /flowforge_render|flowforge_deliver|dsh\.client|ui-deliverables/);
   const insertBlocks = patch.split(/^- insert:/m).slice(1);
   assert.equal(insertBlocks.length, 1);
   const insertedIds = [...insertBlocks[0].matchAll(/^\s+- id:\s*(\S+)/gm)].map((match) => match[1]);
-  assert.deepEqual(insertedIds, ['archify-skill-filesystem']);
+  assert.deepEqual(insertedIds, ['flowforge-skill-filesystem']);
 });
 
 test('distribution acceptance reserves stdout for its machine-readable JSON receipt', () => {

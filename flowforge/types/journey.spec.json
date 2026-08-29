@@ -1,0 +1,26 @@
+{
+  "spec_version": 1,
+  "id": "journey",
+  "label": "Customer journey map",
+  "description": "Customer experience over time: touchpoints, exchanges, emotion and friction.",
+  "renderer": "render-journey.mjs",
+  "schema": "journey.schema.json",
+  "layout": "sequence",
+  "guideKeywords": [
+    "journey",
+    "customer",
+    "experience",
+    "touchpoint",
+    "blueprint"
+  ],
+  "conditions": {
+    "signals": [
+      "customer experience",
+      "user steps through",
+      "touchpoint friction",
+      "front stage back stage"
+    ],
+    "useWhen": "the customer experience over time matters more than the org chart",
+    "avoidWhen": "you are mapping internal team ownership rather than what the customer lives through"
+  }
+}

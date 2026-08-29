@@ -1,0 +1,24 @@
+{
+  "spec_version": 1,
+  "id": "feedback-pipeline",
+  "label": "Feedback pipeline",
+  "description": "How customer feedback flows from collection to decision to action.",
+  "renderer": "render-feedback-pipeline.mjs",
+  "schema": "feedback-pipeline.schema.json",
+  "layout": "flow",
+  "guideKeywords": [
+    "feedback pipeline",
+    "feedback",
+    "user feedback",
+    "voice of customer"
+  ],
+  "conditions": {
+    "signals": [
+      "feedback pipeline",
+      "voice of customer",
+      "feedback collection"
+    ],
+    "useWhen": "you are modeling how feedback becomes decisions",
+    "avoidWhen": "you are mapping a static org chart"
+  }
+}
