@@ -10,8 +10,9 @@ Archify is itself based on Cocoon-AI/architecture-diagram-generator (MIT, v1.0).
 
 ## Lenny's Product Skills (vendored)
 
-The full 76-skill collection is vendored verbatim under `vendor/lenny-skills/`
-from Lenny's Product Skills v2.0 © Refound AI, MIT:
+A curated set of 30 skills relevant to FlowForge is vendored under
+`vendor/lenny-skills/` (kept ids in `vendor/lenny-skills/KEEP.txt`) from
+Lenny's Product Skills v2.0 © Refound AI, MIT:
 https://github.com/RefoundAI/lenny-skills
 
 Harness-facing mirrors live in `.pi/skills/`, `.claude/skills/`,

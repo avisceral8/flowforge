@@ -15,7 +15,7 @@ FlowForge 会就一个流程向你提问——参与者、触发条件、上一�
 - **带回执的校验** —— BPMN 良构性加完整产物门禁：9/9 检查、0 错误、0 警告。
 - **单文件，即交付** —— 自包含 HTML，另含 PNG、SVG、WebM 和 1200×630 分享卡片，明暗主题。
 - **流程版本对比** —— `flowforge compare bpmn v1.json v2.json` 输出精确的新增/删除/变更/改道事实。
-- **随附 Lenny 技能** —— `vendor/lenny-skills/`（76 技能，MIT）为发现式访谈提供参考。
+- **随附 Lenny 技能** —— `vendor/lenny-skills/`（30 个精选技能，MIT）为发现式访谈提供参考。
 
 ## 快速开始
 

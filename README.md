@@ -15,7 +15,7 @@ FlowForge interviews you about a process — actors, trigger, the last actual ru
 - **Validation with receipts** — BPMN well-formedness plus the full artifact gate: 9/9 checks, 0 errors, 0 warnings.
 - **One file, ready to trust and share** — self-contained HTML plus PNG, SVG, WebM, and 1200×630 share cards, dark/light themes.
 - **Process delta** — `flowforge compare bpmn v1.json v2.json` emits exact added / removed / changed / rerouted facts.
-- **Vendored Lenny skills** — `vendor/lenny-skills/` (76 skills, MIT) inform the discovery interview.
+- **Vendored Lenny skills** — `vendor/lenny-skills/` (30 curated skills, MIT) inform the discovery interview.
 
 ## Quick start
 
