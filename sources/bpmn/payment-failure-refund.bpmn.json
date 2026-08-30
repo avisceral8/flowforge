@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "diagram_type": "bpmn",
+  "meta": {
+    "title": "Order with Failed-Payment Refund",
+    "subtitle": "Place an order; if payment fails, cancel and refund",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Payment succeeds",
+        "focus": ["start", "place", "pay", "paid", "confirmed"],
+        "note": "A clean order: payment charged, order confirmed."
+      },
+      {
+        "id": "recovery-path",
+        "label": "Payment fails",
+        "focus": ["pay", "paid", "cancel", "refund", "refunded"],
+        "note": "Payment failure cancels the order and refunds the amount."
+      }
+    ],
+    "output": "sources/bpmn/payment-failure-refund.bpmn-rendered.html"
+  },
+  "pools": [
+    { "id": "customer", "label": "Customer" },
+    { "id": "company", "label": "Company" }
+  ],
+  "lanes": [
+    { "id": "customer", "label": "Customer", "pool": "customer" },
+    { "id": "finance", "label": "Finance", "pool": "company" },
+    { "id": "treasury", "label": "Treasury", "pool": "company" }
+  ],
+  "nodes": [
+    { "id": "start", "lane": "customer", "col": 0, "kind": "event", "eventType": "start", "label": "Start" },
+    { "id": "place", "lane": "customer", "col": 1, "kind": "task", "taskType": "send", "owner": "Customer", "label": "Place order", "sublabel": "cart + payment details", "width": 108 },
+    { "id": "pay", "lane": "finance", "col": 1, "kind": "task", "taskType": "service", "owner": "Finance", "label": "Charge payment", "sublabel": "gateway call", "width": 108 },
+    { "id": "paid", "lane": "finance", "col": 3, "kind": "gateway", "gatewayType": "exclusive", "label": "Paid?" },
+    { "id": "confirmed", "lane": "customer", "col": 3, "kind": "event", "eventType": "end", "label": "Confirmed" },
+    { "id": "cancel", "lane": "finance", "col": 5, "kind": "task", "taskType": "service", "owner": "Finance", "label": "Cancel order", "sublabel": "release inventory" },
+    { "id": "refund", "lane": "treasury", "col": 5, "kind": "task", "taskType": "service", "owner": "Treasury", "label": "Reverse payment", "sublabel": "refund amount", "width": 108 },
+    { "id": "refunded", "lane": "customer", "col": 5, "kind": "event", "eventType": "end", "label": "Refunded" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "place" },
+    { "id": "e2", "from": "place", "to": "pay", "kind": "message", "label": "order" },
+    { "id": "e3", "from": "pay", "to": "paid" },
+    { "id": "e4", "from": "paid", "to": "confirmed", "kind": "message", "label": "yes", "fromSide": "top", "toSide": "bottom", "route": "straight" },
+    { "id": "e5", "from": "paid", "to": "cancel", "label": "no" },
+    { "id": "e6", "from": "cancel", "to": "refund" },
+    { "id": "e7", "from": "refund", "to": "refunded", "kind": "message", "label": "refunded", "fromSide": "right", "toSide": "right", "route": "outside-right", "labelAt": [706, 262] }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "BPMN Process Rules",
+      "items": [
+        "One start and two end states",
+        "Exclusive gateway with labeled branches",
+        "Message flows cross the customer/company boundary",
+        "Sequence flows stay within one pool"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Recovery",
+      "items": [
+        "Payment failure cancels the order",
+        "The amount is refunded to the customer",
+        "Cancel and refund name their owners"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "The money path is auditable end to end",
+        "The map regenerates when the process changes"
+      ]
+    }
+  ]
+}
