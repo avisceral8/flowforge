@@ -16,10 +16,12 @@ Create a self-contained, interactive HTML diagram from a small typed JSON specif
 
 Use this bounded path for ordinary generation. Do not read the optional Viewer Runtime reference unless the user asks about those features.
 
+**Output paths (always):** author candidate IR under `sources/<type>/`, and every rendered artifact lands under `outputs/<type>/`. Never write a rendered HTML anywhere else. Examples: `sources/bpmn/order-to-cash.bpmn.json` → `outputs/bpmn/order-to-cash.html`; `sources/canvas/order-to-cash.journey.json` → `outputs/canvas/order-to-cash.journey.html`. Compare receipts sit beside their HTML as `outputs/<type>/<name>-delta.receipt.json`. See `outputs/README.md`.
+
 1. Choose `bpmn` for any business-process ask (the primary FlowForge type), or `architecture`, `workflow`, `sequence`, `dataflow`, `lifecycle` for inherited technical diagrams.
 1. **Auto-invoke the relevant Lenny skill(s).** For every business-process ask (`bpmn`), immediately read `references/lenny-routing.md`, classify the ask (discovery / reconciliation / alignment), and load the 1–2 matching Lenny skills from `vendor/lenny-skills/skills/<name>/SKILL.md` **without the user asking**. They sharpen the discovery interview only; never put framework jargon in the diagram. For non-process (technical) types, skip this step.
 2. Read one matching schema in `schemas/`, `schemas/common.schema.json`, and one matching JSON example in `examples/`. Read only those files. Fresh authorship means new stable IDs, domain wording, and layout; use the example for field shape, not facts. When real product identity matters, query `node bin/flowforge.mjs brands "<name>" --json`; read `references/brand-marks.md` only for an unknown brand with a user-provided URL.
-3. Artifact first: the next tool action must write the candidate. Write the candidate before inspecting renderer internals. Do not plan exact coordinates in prose. Start with one clear main path, short side branches, sparse labels, and at most 12 primary nodes. Set `meta.quality_profile` to `"showcase"` unless the user explicitly requests a dense `standard` map. Start with automatic routes and labels. Do not add `via`, `channelX`, `channelY`, or `labelAt` before a diagnostic calls for one; apply at most one diagnosed geometry control per repair.
+3. Artifact first: the next tool action must write the candidate to `sources/<type>/`. Write the candidate before inspecting renderer internals. Do not plan exact coordinates in prose. Start with one clear main path, short side branches, sparse labels, and at most 12 primary nodes. Set `meta.quality_profile` to `"showcase"` unless the user explicitly requests a dense `standard` map. Start with automatic routes and labels. Do not add `via`, `channelX`, `channelY`, or `labelAt` before a diagnostic calls for one; apply at most one diagnosed geometry control per repair.
 4. Validate after every candidate edit and immediately before handoff:
 
    ```bash
@@ -27,10 +29,10 @@ Use this bounded path for ordinary generation. Do not read the optional Viewer R
    ```
 
    A receipt with only 4 artifact checks is basic validation, never showcase acceptance. A showcase pass must report all 9 artifact checks with 0 composition errors and 0 warnings. If the candidate omits or misspells the exact `meta.quality_profile` field, fix it before geometry. A passing final validation freezes the candidate: never edit it afterward.
-5. For a delivered HTML, `deliver` is the final acceptance command:
+5. For a delivered HTML, `deliver` is the final acceptance command; write the target under `outputs/<type>/`:
 
    ```bash
-   node bin/flowforge.mjs deliver <type> <candidate.json> <output.html> --quality showcase --json
+   node bin/flowforge.mjs deliver <type> <candidate.json> outputs/<type>/<name>.html --quality showcase --json
    ```
 
    A non-zero exit can never be described as success. If validation fails, change only the diagnosed `subject`, verify `evidence`, choose from `supportedFixes`, and rerun. Continue focused correction while the objective error count reaches a new minimum. If two consecutive rounds do not improve that best count, stop and report the unresolved diagnostics truthfully.

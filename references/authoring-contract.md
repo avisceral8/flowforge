@@ -2,6 +2,10 @@
 
 Read this reference only after the Fast authoring path calls for more detail. The schemas and examples remain authoritative.
 
+## Output paths
+
+Author candidate IR under `sources/<type>/`; every rendered artifact lands under `outputs/<type>/`. Never write a rendered HTML anywhere else. Compare receipts sit beside their HTML as `outputs/<type>/<name>-delta.receipt.json`. See `outputs/README.md`.
+
 ## Schema lookup
 
 Read both the mode schema and `schemas/common.schema.json`. The mode schemas use `$ref`, so the common file is where shared enums live.
