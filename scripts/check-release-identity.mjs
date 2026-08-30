@@ -10,7 +10,7 @@ import {
   parseSemver,
   validateLocalRelease,
   validateStableUpdateManifest,
-} from '../flowforge/scripts/update-contract.mjs';
+} from './update-contract.mjs';
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const rootFlag = process.argv.indexOf('--root');
@@ -49,7 +49,7 @@ function checkSkillRelease(value, version, isDevelopment) {
   } catch {
     // Report the repository-specific cross-artifact requirement below.
   }
-  fail(`flowforge/skill-release.json must identify flowforge ${version} as ${expectedChannel}, use the official repository, and pin the trusted update manifest URL.`);
+  fail(`skill-release.json must identify flowforge ${version} as ${expectedChannel}, use the official repository, and pin the trusted update manifest URL.`);
 }
 
 function checkStableUpdateManifest(value, expectedVersion, previousVersion, packageVersion, isDevelopment) {
@@ -164,7 +164,7 @@ function checkRoadmap(relativePath, source, version, isDevelopment) {
   }
 }
 
-const packageJson = readJson('flowforge/package.json');
+const packageJson = readJson('package.json');
 const changelog = read('CHANGELOG.md');
 const unreleasedStart = changelog.search(/^## \[Unreleased\][^\n]*(?:\n|$)/m);
 const afterUnreleased = unreleasedStart === -1
@@ -212,7 +212,7 @@ if (hasSupportedVersion && hasRealUnreleasedChanges) {
 }
 
 if (hasSupportedVersion) {
-  checkSkillRelease(readJson('flowforge/skill-release.json'), version, isDevelopment);
+  checkSkillRelease(readJson('skill-release.json'), version, isDevelopment);
   checkStableUpdateManifest(
     readJson('docs/skill-updates/flowforge/stable.json'),
     newestStableLabel,
@@ -221,32 +221,28 @@ if (hasSupportedVersion) {
     isDevelopment,
   );
 
-  const lock = readJson('flowforge/package-lock.json');
+  const lock = readJson('package-lock.json');
   if (lock.version !== version || lock.packages?.['']?.version !== version) {
-    fail(`flowforge/package-lock.json must match ${version} at the root and packages[""].`);
+    fail(`package-lock.json must match ${version} at the root and packages[""].`);
   }
 
-  const skill = read('flowforge/SKILL.md');
+  const skill = read('SKILL.md');
   const skillVersion = skill.match(/^\s*version:\s*["']?([^"'\s]+)["']?\s*$/m)?.[1];
   const expectedSkillVersion = `${parsedVersion.core[0]}.${parsedVersion.core[1]}`;
   if (skillVersion !== expectedSkillVersion) {
-    fail(`flowforge/SKILL.md metadata version ${skillVersion || '(missing)'} must map to package ${version} as ${expectedSkillVersion}.`);
+    fail(`SKILL.md metadata version ${skillVersion || '(missing)'} must map to package ${version} as ${expectedSkillVersion}.`);
   }
 
-  const rendererTemplate = read('flowforge/assets/template.html');
+  const rendererTemplate = read('assets/template.html');
   const generatorVersions = [...rendererTemplate.matchAll(/<meta\s+name="generator"\s+content="flowforge\s+([^"]+)"\s*\/?>/g)]
     .map((match) => match[1]);
   if (generatorVersions.length !== 1 || generatorVersions[0] !== version) {
-    fail(`flowforge/assets/template.html generator must be flowforge ${version}; found ${generatorVersions.join(', ') || '(missing)'}.`);
+    fail(`assets/template.html generator must be flowforge ${version}; found ${generatorVersions.join(', ') || '(missing)'}.`);
   }
 
   const english = read('README.md');
-  const englishMirror = read('README_EN.md');
   checkReadme('README.md', english, version, 'en', isDevelopment);
-  checkReadme('README_EN.md', englishMirror, version, 'en', isDevelopment);
   checkRavenBoundary('README.md', english, 'en');
-  checkRavenBoundary('README_EN.md', englishMirror, 'en');
-  if (english !== englishMirror) fail('README_EN.md must remain byte-identical to README.md.');
 
   if (newestStableLabel && isDevelopment) {
     const stableMinor = newestStableLabel.split('.').slice(0, 2).join('\\.');

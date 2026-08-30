@@ -10,7 +10,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
 const defaultPackageRoot = process.env.RUNNER_TEMP
   ? path.join(process.env.RUNNER_TEMP, 'flowforge-package', 'flowforge')
-  : path.join(repoRoot, 'flowforge');
+  : path.join(repoRoot);
 const skillRoot = path.resolve(process.argv[2] || defaultPackageRoot);
 const cli = path.join(skillRoot, 'bin', 'flowforge.mjs');
 const updateChecker = path.join(skillRoot, 'scripts', 'check-update.mjs');

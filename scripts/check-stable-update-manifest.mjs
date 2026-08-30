@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { validateStableUpdateManifest } from '../flowforge/scripts/update-contract.mjs';
+import { validateStableUpdateManifest } from './update-contract.mjs';
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -42,10 +42,10 @@ if (sourceRef !== 'HEAD' && sourceRef !== tag) {
   fail(`--source-ref must be HEAD or the exact release tag ${JSON.stringify(tag)}; found ${JSON.stringify(sourceRef)}.`);
 }
 
-const packageJson = readJson('flowforge/package.json');
+const packageJson = readJson('package.json');
 const manifest = readJson('docs/skill-updates/flowforge/stable.json');
 if (version && sourceRef === 'HEAD' && packageJson?.version !== version) {
-  fail(`flowforge/package.json ${packageJson?.version || '(missing)'} does not match ${tag}.`);
+  fail(`package.json ${packageJson?.version || '(missing)'} does not match ${tag}.`);
 }
 
 if (version) {
@@ -94,7 +94,7 @@ if (taggerTime && manifest?.publishedAt !== taggerTime) {
 
 let treeSha = null;
 try {
-  treeSha = execFileSync('git', ['-C', repoRoot, 'rev-parse', `${sourceRef}:flowforge`], {
+  treeSha = execFileSync('git', ['-C', repoRoot, 'rev-parse', `${sourceRef}`], {
     encoding: 'utf8',
     stdio: ['ignore', 'pipe', 'pipe'],
   }).trim();

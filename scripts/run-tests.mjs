@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const skillRoot = path.join(repoRoot, 'flowforge');
+const skillRoot = repoRoot;
 const testRoot = path.join(skillRoot, 'test');
 const testFiles = fs.readdirSync(testRoot)
   .filter((entry) => entry.endsWith('.test.mjs'))

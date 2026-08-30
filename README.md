@@ -55,19 +55,19 @@ Raven is a manual ZIP installation outside the agent switcher: extract `flowforg
 ### CLI
 
 ```bash
-cd flowforge
 npm install
 node bin/flowforge.mjs doctor
-node bin/flowforge.mjs render bpmn sources/bpmn/order-to-fulfillment.bpmn.json ../deliverables/bpmn/order-to-fulfillment.html --quality showcase
-node bin/flowforge.mjs compare bpmn sources/bpmn/order-to-cash.bpmn.json sources/bpmn/order-to-cash-v2.bpmn.json ../deliverables/bpmn/order-to-cash-delta.html --json
+node bin/flowforge.mjs render bpmn sources/bpmn/order-to-fulfillment.bpmn.json order-to-fulfillment.html --quality showcase
+node bin/flowforge.mjs compare bpmn sources/bpmn/order-to-cash.bpmn.json sources/bpmn/order-to-cash-v2.bpmn.json order-to-cash-delta.html --json
 ```
 
-## Deliverables
+## Sources
 
-Rendered, validated artifacts live in [`deliverables/`](deliverables/). Source JSON for the BPMN and canvas examples lives in `flowforge/sources/`. Regenerate everything with:
+Source JSON for the BPMN and canvas examples lives in `sources/`:
 
-```bash
-node scripts/build-deliverables.mjs
+```
+sources/bpmn/     order-to-fulfillment, order-to-cash, order-to-cash-v2
+sources/canvas/   journey, infoflow, stakeholder-map, capability, okr-tree, north-star, growth-loop, launch-plan, feedback-pipeline
 ```
 
 ## Not supported

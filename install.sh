@@ -4,7 +4,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SRC="$SCRIPT_DIR/flowforge"
+SRC="$SCRIPT_DIR"
 
 if [ ! -f "$SRC/SKILL.md" ]; then
   echo "error: $SRC/SKILL.md not found — run from the FlowForge repository root" >&2
@@ -18,7 +18,7 @@ install_to() {
   rm -rf "$dest"
   mkdir -p "$dest"
   # Tracked-only copy: excludes node_modules, tests, and dev scripts.
-  for item in SKILL.md schemas renderers references recipes examples assets bin delta package.json; do
+  for item in SKILL.md schemas renderers references recipes examples assets bin delta sources evals thinking types package.json; do
     if [ -e "$SRC/$item" ]; then cp -r "$SRC/$item" "$dest/"; fi
   done
   echo "installed: $dest"

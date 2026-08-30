@@ -7,15 +7,15 @@ import { fileURLToPath } from 'node:url';
 
 const scriptRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const REQUIRED_INPUTS = new Set([
-  'flowforge/renderers/shared/generated-validators.mjs',
-  'flowforge/scripts/check-update.mjs',
-  'flowforge/scripts/update-contract.mjs',
-  'flowforge/skill-release.json',
+  'renderers/shared/generated-validators.mjs',
+  'scripts/check-update.mjs',
+  'scripts/update-contract.mjs',
+  'skill-release.json',
 ]);
 const EXCLUDED_FILES = new Set([
-  'flowforge/package-lock.json',
-  'flowforge/scripts/generate-brand-marks.mjs',
-  'flowforge/scripts/generate-validators.mjs',
+  'package-lock.json',
+  'scripts/generate-brand-marks.mjs',
+  'scripts/generate-validators.mjs',
 ]);
 const EXCLUDED_SEGMENTS = new Set([
   '.DS_Store',
@@ -44,7 +44,7 @@ function gitFailureDetail(result) {
 }
 
 function trackedEntries(repoRoot) {
-  const result = spawnSync('git', ['ls-files', '--stage', '-z', '--', 'flowforge'], {
+  const result = spawnSync('git', ['ls-files', '--stage', '-z', '--', '.'], {
     cwd: repoRoot,
     encoding: 'buffer',
   });
@@ -55,7 +55,7 @@ function trackedEntries(repoRoot) {
     const separator = record.indexOf('\t');
     const metadata = separator === -1 ? [] : record.slice(0, separator).split(' ');
     const relative = separator === -1 ? '' : record.slice(separator + 1);
-    if (metadata.length !== 3 || !relative.startsWith('flowforge/')) {
+    if (metadata.length !== 3 || !relative.startsWith('')) {
       throw new Error(`invalid tracked package record: ${JSON.stringify(record)}`);
     }
     return {
@@ -68,7 +68,7 @@ function trackedEntries(repoRoot) {
 
 function excluded(relative) {
   if (EXCLUDED_FILES.has(relative)) return true;
-  const insideSkill = relative.slice('flowforge/'.length);
+  const insideSkill = relative;
   if (insideSkill === 'test' || insideSkill.startsWith('test/')) return true;
   return insideSkill.split('/').some((segment) => (
     EXCLUDED_SEGMENTS.has(segment) || segment.startsWith('.validator-check-')
@@ -205,7 +205,7 @@ export function stageCleanSkill({ repoRoot = scriptRoot, destination }) {
   let fileCount = 0;
   try {
     for (const entry of packageEntries) {
-      const relativeInsideSkill = entry.relative.slice('flowforge/'.length);
+      const relativeInsideSkill = entry.relative;
       const target = path.join(resolvedDestination, ...relativeInsideSkill.split('/'));
       fs.mkdirSync(path.dirname(target), { recursive: true });
       fs.writeFileSync(target, entry.content);

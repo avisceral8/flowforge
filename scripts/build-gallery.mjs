@@ -9,7 +9,7 @@ import { copySiteAssets } from './copy-site-assets.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(__dirname, '..');
-const skillRoot = path.join(repoRoot, 'flowforge');
+const skillRoot = repoRoot;
 const outputRoot = path.resolve(process.argv[2] || path.join(repoRoot, 'docs'));
 const artifactsRoot = path.join(outputRoot, 'gallery', 'artifacts');
 const sourcesRoot = path.join(outputRoot, 'gallery', 'sources');

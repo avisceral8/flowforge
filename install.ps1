@@ -8,7 +8,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
-$src = Join-Path $scriptDir 'flowforge'
+$src = $scriptDir
 
 if (-not (Test-Path (Join-Path $src 'SKILL.md'))) {
     Write-Error "error: $src\SKILL.md not found - run from the FlowForge repository root"
@@ -21,7 +21,7 @@ function Install-To {
     if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
     # Tracked-only copy: excludes node_modules, tests, and dev scripts.
-    foreach ($item in @('SKILL.md', 'schemas', 'renderers', 'references', 'recipes', 'examples', 'assets', 'bin', 'delta', 'package.json')) {
+    foreach ($item in @('SKILL.md', 'schemas', 'renderers', 'references', 'recipes', 'examples', 'assets', 'bin', 'delta', 'sources', 'evals', 'thinking', 'types', 'package.json')) {
         $from = Join-Path $src $item
         if (Test-Path $from) { Copy-Item -Recurse -Force $from (Join-Path $dest $item) }
     }
