@@ -52,7 +52,7 @@ const layout = {
   laneH: 104,
   laneGap: 20,
   laneTitleH: 30,
-  colXs: [88, 220, 300, 430, 500, 625],,
+  colXs: [88, 220, 300, 430, 500, 625],
   nodeW: 92,
   nodeH: 52
 };
