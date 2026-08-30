@@ -69,7 +69,7 @@ function labelBaseline(group) {
 }
 
 test('bpmn task labels clear the semantic glyph vertically', () => {
-  const input = path.join(skillRoot, 'examples', 'order-to-fulfillment.bpmn.json');
+  const input = path.join(skillRoot, 'sources', 'bpmn', 'order-to-fulfillment.bpmn.json');
   const outPath = path.join(tmp, 'order-to-fulfillment.html');
   render('bpmn', input, outPath);
   const html = fs.readFileSync(outPath, 'utf8');

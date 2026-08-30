@@ -1341,28 +1341,28 @@ async function commandDoctor() {
   });
 
   const examples = {
-    bpmn: 'order-to-cash.bpmn.json',
-    architecture: 'web-app.architecture.json',
-    workflow: 'agent-tool-call.workflow.json',
-    sequence: 'cache-miss-request.sequence.json',
-    dataflow: 'product-analytics.dataflow.json',
-    lifecycle: 'agent-run.lifecycle.json',
-    journey: 'order-to-cash.journey.json',
-    infoflow: 'order-to-cash.infoflow.json',
-    'stakeholder-map': 'order-to-cash.stakeholder-map.json',
-    capability: 'order-to-cash.capability.json',
-    'okr-tree': 'order-to-cash.okr-tree.json',
-    'north-star': 'order-to-cash.north-star.json',
-    'growth-loop': 'order-to-cash.growth-loop.json',
-    'launch-plan': 'order-to-cash.launch-plan.json',
-    'feedback-pipeline': 'order-to-cash.feedback-pipeline.json',
+    bpmn: 'sources/bpmn/order-to-cash.bpmn.json',
+    architecture: 'examples/web-app.architecture.json',
+    workflow: 'examples/agent-tool-call.workflow.json',
+    sequence: 'examples/cache-miss-request.sequence.json',
+    dataflow: 'examples/product-analytics.dataflow.json',
+    lifecycle: 'examples/agent-run.lifecycle.json',
+    journey: 'sources/canvas/order-to-cash.journey.json',
+    infoflow: 'sources/canvas/order-to-cash.infoflow.json',
+    'stakeholder-map': 'sources/canvas/order-to-cash.stakeholder-map.json',
+    capability: 'sources/canvas/order-to-cash.capability.json',
+    'okr-tree': 'sources/canvas/order-to-cash.okr-tree.json',
+    'north-star': 'sources/canvas/order-to-cash.north-star.json',
+    'growth-loop': 'sources/canvas/order-to-cash.growth-loop.json',
+    'launch-plan': 'sources/canvas/order-to-cash.launch-plan.json',
+    'feedback-pipeline': 'sources/canvas/order-to-cash.feedback-pipeline.json',
   };
 
   for (const type of TYPES) {
     const required = [
       path.join(skillRoot, 'renderers', type, `render-${type}.mjs`),
       path.join(skillRoot, 'schemas', `${type}.schema.json`),
-      path.join(skillRoot, 'examples', examples[type]),
+      path.join(skillRoot, examples[type]),
     ];
     const missing = required.filter((file) => !fs.existsSync(file)).length;
     checks.push({

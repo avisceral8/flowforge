@@ -13,6 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const skillRoot = path.resolve(__dirname, '..', 'flowforge');
 const repoRoot = path.resolve(skillRoot, '..');
 const deliverables = path.join(repoRoot, 'deliverables');
+const sourceRoot = path.join(skillRoot, 'sources');
 const cli = path.join(skillRoot, 'bin', 'flowforge.mjs');
 
 const BPMN_EXAMPLES = ['order-to-fulfillment', 'order-to-cash'];
@@ -43,15 +44,15 @@ fs.mkdirSync(path.join(deliverables, 'canvas'), { recursive: true });
 
 console.log('BPMN process maps');
 for (const name of BPMN_EXAMPLES) {
-  render('bpmn', path.join(skillRoot, 'examples', `${name}.bpmn.json`), path.join(deliverables, 'bpmn', `${name}.html`));
+  render('bpmn', path.join(sourceRoot, 'bpmn', `${name}.bpmn.json`), path.join(deliverables, 'bpmn', `${name}.html`));
 }
 // Before/Delta/After for order-to-cash v1 -> v2.
-run(['compare', 'bpmn', path.join(skillRoot, 'examples', 'order-to-cash.bpmn.json'), path.join(skillRoot, 'examples', 'order-to-cash-v2.bpmn.json'), path.join(deliverables, 'bpmn', 'order-to-cash-delta.html'), '--receipt', path.join(deliverables, 'bpmn', 'order-to-cash-delta.receipt.json'), '--json']);
+run(['compare', 'bpmn', path.join(sourceRoot, 'bpmn', 'order-to-cash.bpmn.json'), path.join(sourceRoot, 'bpmn', 'order-to-cash-v2.bpmn.json'), path.join(deliverables, 'bpmn', 'order-to-cash-delta.html'), '--receipt', path.join(deliverables, 'bpmn', 'order-to-cash-delta.receipt.json'), '--json']);
 console.log('  rendered deliverables/bpmn/order-to-cash-delta.html');
 
 console.log('Canvas business types');
 for (const type of CANVAS_TYPES) {
-  render(type, path.join(skillRoot, 'examples', `order-to-cash.${type}.json`), path.join(deliverables, 'canvas', `order-to-cash.${type}.html`));
+  render(type, path.join(sourceRoot, 'canvas', `order-to-cash.${type}.json`), path.join(deliverables, 'canvas', `order-to-cash.${type}.html`));
 }
 
 console.log('\nDeliverables rebuilt in', path.relative(repoRoot, deliverables));
