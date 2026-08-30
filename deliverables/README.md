@@ -1,8 +1,15 @@
 # FlowForge — Final Deliverables
 
 Generated, validated artifacts. Sources of truth live in `flowforge/examples/`
-and `flowforge/schemas/`; this folder holds the polished outputs you show,
-share, or audit.
+(source JSON) and `flowforge/schemas/`; this folder holds the polished outputs
+you show, share, or audit.
+
+Rebuild everything with:
+
+```bash
+node scripts/build-deliverables.mjs       # re-renders bpmn/ + canvas/
+# canonical zip (Node 22): scripts/build-zip.sh ../deliverables/flowforge.zip
+```
 
 ## BPMN process maps (primary)
 
@@ -30,12 +37,3 @@ share, or audit.
 ## Distribution
 
 - `flowforge.zip` — deterministic skill archive (tracked-only; no node_modules/tests/dev scripts).
-
-## Regenerate
-
-```bash
-cd flowforge
-node bin/flowforge.mjs render bpmn examples/order-to-fulfillment.bpmn.json ../deliverables/bpmn/order-to-fulfillment.html --quality showcase
-node bin/flowforge.mjs compare bpmn examples/order-to-cash.bpmn.json examples/order-to-cash-v2.bpmn.json ../deliverables/bpmn/order-to-cash-delta.html --receipt ../deliverables/bpmn/order-to-cash-delta.receipt.json
-# canonical zip (Node 22): scripts/build-zip.sh ../deliverables/flowforge.zip
-```
