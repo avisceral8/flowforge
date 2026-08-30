@@ -4,5 +4,7 @@ node_modules/
 .claude/
 .lore/
 
-# vendored lenny-skills (re-sync via scripts/sync-lenny-skills.mjs)
-vendor/
+.pi/
+.agents/
+.codex/
+flowforge/

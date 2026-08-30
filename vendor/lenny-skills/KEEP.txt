@@ -1,0 +1,32 @@
+# FlowForge curated Lenny skills (v2.0, MIT). One id per line; used by
+# scripts/sync-lenny-skills.mjs to mirror only relevant skills into harness dirs.
+ai-assisted-prototyping
+ai-evals
+ai-native-ux
+ai-product-strategy
+analyzing-user-feedback
+building-with-ai-agents
+competitive-strategy
+continuous-discovery
+customer-interviews
+defining-icp
+defining-product-strategy
+engineering-health
+evaluating-trade-offs
+executive-communication
+goal-setting-okrs
+high-stakes-decisions
+idea-validation
+launch-planning
+measuring-pmf
+north-star-metrics
+planning-cadence
+positioning
+product-experiments
+product-taste
+product-vision
+roadmap-prioritization
+shipping-velocity
+stakeholder-alignment
+user-onboarding-activation
+writing-prds
