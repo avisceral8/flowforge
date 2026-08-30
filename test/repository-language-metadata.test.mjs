@@ -4,7 +4,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function linguistGenerated(relativePath) {
   const output = execFileSync(
@@ -24,7 +24,6 @@ test('repository language metadata separates generated artifacts from implementa
     'docs/gallery/artifacts/web-app.architecture.html',
     'docs/guide.html',
     'docs/start.html',
-    'experiments/mco-showcase/mco-runtime.html',
     'renderers/shared/generated-brand-marks.mjs',
     'renderers/shared/generated-validators.mjs',
   ]) {

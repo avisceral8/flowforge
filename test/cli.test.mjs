@@ -73,7 +73,7 @@ test('cli: help lists commands and diagram types', () => {
   const result = run(['--help']);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /flowforge render <type>/);
-  assert.match(result.stdout, /flowforge compare architecture <base\.json> <head\.json>/);
+  assert.match(result.stdout, /flowforge compare bpmn <base\.json> <head\.json>/);
   assert.match(result.stdout, /flowforge deliver <type>/);
   assert.match(result.stdout, /flowforge preview <type>/);
   assert.match(result.stdout, /flowforge visual-check <output\.html>/);
@@ -651,7 +651,7 @@ test('cli: rejects a quality flag without a value', () => {
 });
 
 test('cli: inspect emits architecture layout json', () => {
-  const input = path.resolve(skillRoot, '../examples/flowforge-repo-grid.architecture.json');
+  const input = path.resolve(skillRoot, 'examples/flowforge-repo-grid.architecture.json');
   const result = run(['inspect', 'architecture', input]);
   assert.equal(result.status, 0, result.stderr);
   const parsed = JSON.parse(result.stdout);

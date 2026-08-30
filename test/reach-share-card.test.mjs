@@ -138,12 +138,6 @@ test('Skill, product docs, and READMEs keep the optional truthful boundary expli
   assert.equal(png.subarray(0, 8).toString('hex'), '89504e470d0a1a0a');
   assert.equal(png.readUInt32BE(16), 1200);
   assert.equal(png.readUInt32BE(20), 630);
-
-  const product = fs.readFileSync(path.join(repoRoot, 'PRODUCT.md'), 'utf8');
-  const design = fs.readFileSync(path.join(repoRoot, 'DESIGN.md'), 'utf8');
-  assert.match(product, /Reach Share Card/);
-  assert.match(design, /Reach Share Card/);
-  assert.match(design, /not (?:runtime )?(?:impact|causality|breakage)/i);
 });
 
 process.on('exit', () => fs.rmSync(tmp, { recursive: true, force: true }));

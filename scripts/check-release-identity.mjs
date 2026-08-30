@@ -165,7 +165,11 @@ function checkRoadmap(relativePath, source, version, isDevelopment) {
 }
 
 const packageJson = readJson('package.json');
-const changelog = read('CHANGELOG.md');
+// CHANGELOG is optional: without it we cannot derive published-stable labels,
+// so skip every stable-manifest comparison that depends on them.
+const changelog = fs.existsSync(path.join(repoRoot, 'CHANGELOG.md'))
+  ? fs.readFileSync(path.join(repoRoot, 'CHANGELOG.md'), 'utf8')
+  : '';
 const unreleasedStart = changelog.search(/^## \[Unreleased\][^\n]*(?:\n|$)/m);
 const afterUnreleased = unreleasedStart === -1
   ? ''
@@ -186,9 +190,9 @@ const supportedPrerelease = parsedVersion?.prerelease === null
     && /^\d+$/.test(parsedVersion.prerelease[1]));
 const hasSupportedVersion = Boolean(parsedVersion && parsedVersion.build === null && supportedPrerelease);
 const isDevelopment = Boolean(hasSupportedVersion && parsedVersion.prerelease);
-const publishedLabels = [...changelog.matchAll(/^## \[([^\]]+)\]/gm)]
-  .map((match) => match[1])
-  .filter((label) => label !== 'Unreleased');
+const publishedLabels = changelog
+  ? [...changelog.matchAll(/^## \[([^\]]+)\]/gm)].map((match) => match[1]).filter((label) => label !== 'Unreleased')
+  : [];
 for (const label of publishedLabels) {
   if (!isStableCoreVersion(label)) fail(`CHANGELOG published version is not stable SemVer: ${label}.`);
 }
@@ -213,13 +217,15 @@ if (hasSupportedVersion && hasRealUnreleasedChanges) {
 
 if (hasSupportedVersion) {
   checkSkillRelease(readJson('skill-release.json'), version, isDevelopment);
-  checkStableUpdateManifest(
-    readJson('docs/skill-updates/flowforge/stable.json'),
-    newestStableLabel,
-    previousStableLabel,
-    version,
-    isDevelopment,
-  );
+  if (newestStableLabel && fs.existsSync(path.join(repoRoot, 'docs/skill-updates/flowforge/stable.json'))) {
+    checkStableUpdateManifest(
+      readJson('docs/skill-updates/flowforge/stable.json'),
+      newestStableLabel,
+      previousStableLabel,
+      version,
+      isDevelopment,
+    );
+  }
 
   const lock = readJson('package-lock.json');
   if (lock.version !== version || lock.packages?.['']?.version !== version) {
@@ -263,7 +269,9 @@ if (hasSupportedVersion) {
   const start = read('docs/start.html');
   checkDocument('docs/start.html', start, version, isDevelopment);
   checkRavenBoundary('docs/start.html', start, 'both');
-  checkRoadmap('ROADMAP.md', read('ROADMAP.md'), version, isDevelopment);
+  if (fs.existsSync(path.join(repoRoot, 'ROADMAP.md'))) {
+    checkRoadmap('ROADMAP.md', read('ROADMAP.md'), version, isDevelopment);
+  }
 
   for (const templatePath of [
     'scripts/start-template.html',

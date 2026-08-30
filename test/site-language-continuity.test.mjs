@@ -11,7 +11,7 @@ import { fileURLToPath } from 'node:url';
 import { ChromeVisualBrowser, findChrome } from '../bin/visual-check.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const repoRoot = path.resolve(__dirname, '../..');
+const repoRoot = path.resolve(__dirname, '..');
 const runtimePath = path.join(repoRoot, 'docs/assets/site-language.js');
 const navigationPath = path.join(repoRoot, 'docs/assets/site-navigation.css');
 const integrationEnabled = process.env.FLOWFORGE_SITE_INTEGRATION === '1';

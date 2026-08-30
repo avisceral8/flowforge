@@ -210,7 +210,7 @@ test('the embedded update identity must match the package release exactly', () =
 
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /flowforge\/skill-release\.json must identify flowforge 2\.13\.0-dev\.0 as development/);
+    assert.match(result.stderr, /skill-release\.json must identify flowforge 2\.13\.0-dev\.0 as development/);
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
@@ -441,7 +441,7 @@ test('renderer template generator carries the complete package prerelease identi
 
     const result = runCheck(fixture);
     assert.notEqual(result.status, 0);
-    assert.match(result.stderr, /flowforge\/assets\/template\.html generator must be flowforge 2\.13\.0-dev\.0/);
+    assert.match(result.stderr, /assets\/template\.html generator must be flowforge 2\.13\.0-dev\.0/);
   } finally {
     fs.rmSync(fixture, { recursive: true, force: true });
   }
