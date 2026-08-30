@@ -1,31 +1,44 @@
 # FlowForge
 
-> **FlowForge fork** — this repository is a fork of [tt-a1i/archify](https://github.com/tt-a1i/archify) (MIT) pointed at **business processes** instead of codebases: chat in, validated BPMN 2.0 process map out. Upstream's technical diagram engine is inherited unchanged. See [`NOTICE.md`](NOTICE.md) for attribution.
+The process map that regenerates instead of rotting.
 
-**Turn a chat about how your business actually works into a living, verified BPMN 2.0 map.**
+FlowForge turns a plain-language description of a business process into a validated BPMN 2.0 map, built inside your agent chat. Describe order-to-cash in a few sentences. FlowForge asks the follow-up questions, confirms the story back, and compiles a self-contained HTML map you can open, share, or audit.
 
-FlowForge interviews you about a process — actors, trigger, the last actual run, decision points, exceptions, handoffs — then compiles a typed JSON IR into a self-contained, deterministic interactive HTML artifact. Standard BPMN 2.0 notation: start/intermediate/end events, exclusive/inclusive/parallel gateways, typed tasks, pools and lanes, sequence and message flows.
+FlowForge is a fork of Archify (MIT), pointed at business processes instead of codebases. See [NOTICE.md](NOTICE.md) for attribution.
 
-![version badge](https://img.shields.io/badge/version-2.16.0--dev.0-0891b2?style=flat-square)
+## Why
 
-**Current development version:** `v2.16.0-dev.0`.
+Process maps rot. The person who knows the process rarely owns a diagramming tool, so maps are drawn by hand, get redrawn for every audit, and go stale within a quarter.
 
-- **Discovery-first, not drawing-first** — the agent asks; you talk; the map appears. Confirm-back is a hard gate before anything renders.
-- **Every interaction stays grounded** — search, focus, upstream/downstream reach, exact routes, guided stories; nothing is invented beyond the authored topology.
-- **Validation with receipts** — BPMN well-formedness plus the full artifact gate: 9/9 checks, 0 errors, 0 warnings.
-- **One file, ready to trust and share** — self-contained HTML plus PNG, SVG, WebM, and 1200×630 share cards, dark/light themes.
-- **Process delta** — `flowforge compare bpmn v1.json v2.json` emits exact added / removed / changed / rerouted facts.
-- **Vendored Lenny skills** — `vendor/lenny-skills/` (30 curated skills, MIT) inform the discovery interview.
+FlowForge fixes the root cause: the map is compiled from validated source, not drawn. When the process changes, you describe the change and regenerate.
+
+## What you get
+
+- BPMN 2.0 notation: events, gateways, typed tasks, pools and lanes, sequence and message flows.
+- An interview that runs first: actors, trigger, the last actual run, decision points, exceptions, handoffs. Nothing renders until you confirm the story.
+- Validation with receipts: 9/9 artifact checks, 0 errors, 0 warnings, or the map is not produced.
+- Process deltas: compare two versions and get exact added, removed, changed, and rerouted facts.
+- One file per map: standalone HTML with light and dark themes, plus PNG, SVG, WebM, and 1200x630 share cards.
+- Business diagram types beyond BPMN: journey, infoflow, stakeholder map, capability, OKR tree, growth loop, launch plan, feedback pipeline.
+- The inherited Archify technical diagrams: architecture, workflow, sequence, dataflow, lifecycle.
+
+## How it works
+
+1. Describe the process in chat. "Map our expense approval process."
+2. FlowForge interviews you. Who touches it? What starts it? What did the last actual run look like? Where does it branch? What goes wrong? Where does work change hands?
+3. Confirm the numbered story back. This is a hard gate; nothing renders without it.
+4. FlowForge compiles the validated map and opens it.
+
+When the process changes, describe the change. FlowForge re-renders and compares against the previous version.
 
 ## Quick start
 
-```bash
-git clone <your-fork> && cd flowforge
-./install.sh        # macOS / Linux
-./install.ps1       # Windows
-```
+Install FlowForge as an agent skill:
 
-Raven is a manual ZIP installation outside the agent switcher: extract `flowforge.zip` into `~/.raven/workspace/skills`, yielding `~/.raven/workspace/skills/flowforge`.
+```bash
+./install.sh    # macOS / Linux
+./install.ps1   # Windows
+```
 
 Then ask your agent:
 
@@ -33,36 +46,39 @@ Then ask your agent:
 Map our order-to-cash process.
 ```
 
-Try the CLI directly:
+Raven is a manual ZIP installation outside the agent switcher: extract `flowforge.zip` into `~/.raven/workspace/skills`, yielding `~/.raven/workspace/skills/flowforge`.
+
+**Current development version:** `v2.16.0-dev.0`.
+
+![version badge](https://img.shields.io/badge/version-2.16.0--dev.0-0891b2?style=flat-square)
+
+### CLI
 
 ```bash
 cd flowforge
 npm install
 node bin/flowforge.mjs doctor
-node bin/flowforge.mjs render bpmn examples/order-to-fulfillment.bpmn.json examples/order-to-fulfillment.bpmn-rendered.html --quality showcase
-node bin/flowforge.mjs compare bpmn examples/order-to-cash.bpmn.json examples/order-to-cash-v2.bpmn.json examples/order-to-cash-delta.html --json
+node bin/flowforge.mjs render bpmn sources/bpmn/order-to-fulfillment.bpmn.json ../deliverables/bpmn/order-to-fulfillment.html --quality showcase
+node bin/flowforge.mjs compare bpmn sources/bpmn/order-to-cash.bpmn.json sources/bpmn/order-to-cash-v2.bpmn.json ../deliverables/bpmn/order-to-cash-delta.html --json
 ```
 
-## Diagram types
+## Deliverables
 
-| Type | Use for |
-|---|---|
-| `bpmn` | **Business processes** — approvals, handoffs, order-to-cash, onboarding, incident handling (primary) |
-| `journey` | Customer journeys and service blueprints |
-| `infoflow` | Information / document flows and lineage |
-| `stakeholder-map` | Who matters and how they relate |
-| `capability` | Operating models: teams, capabilities, systems |
-| `okr-tree`, `north-star`, `growth-loop`, `launch-plan`, `feedback-pipeline` | Planning / growth canvases |
-| `architecture`, `workflow`, `sequence`, `dataflow`, `lifecycle` | Inherited upstream technical diagrams |
+Rendered, validated artifacts live in [`deliverables/`](deliverables/). Source JSON for the BPMN and canvas examples lives in `flowforge/sources/`. Regenerate everything with:
 
-## Not supported (by design)
+```bash
+node scripts/build-deliverables.mjs
+```
 
-- BPMN execution/simulation engine, BPMN-XML import/export
+## Not supported
+
+- BPMN execution or simulation engine
+- BPMN-XML import and export
 - Visual drag-and-drop editor
 - Non-English UI
-- Codebase analysis (that's upstream Archify's job)
+- Codebase analysis (that is Archify's job)
 - Hosted service or database
 
-## Credits & license
+## Credits and license
 
-[MIT](LICENSE). FlowForge is a fork of [Archify](https://github.com/tt-a1i/archify) by tt-a1i (MIT), itself based on Cocoon-AI/architecture-diagram-generator (MIT). Lenny's Product Skills v2.0 (MIT) by Refound AI are vendored under `vendor/lenny-skills/`. See [`NOTICE.md`](NOTICE.md).
+[MIT](LICENSE). FlowForge is a fork of Archify by tt-a1i (MIT), itself based on Cocoon-AI/architecture-diagram-generator (MIT). Lenny's Product Skills v2.0 by Refound AI (MIT) are vendored under `vendor/lenny-skills/`. See [NOTICE.md](NOTICE.md).
