@@ -662,6 +662,19 @@ function renderGroup(group, index) {
         <text x="${span.x + 10}" y="${y + 14}" class="${textClass}" font-size="7" font-weight="600">${esc(group.label)}</text>`;
 }
 
+function taskRole(taskType) {
+  const roles = {
+    user: 'frontend',
+    service: 'backend',
+    manual: 'cloud',
+    script: 'backend',
+    'business-rule': 'security',
+    send: 'messagebus',
+    receive: 'messagebus',
+  };
+  return roles[taskType] || 'external';
+}
+
 function bpmnFill(node) {
   if (node.kind === 'event') {
     const byType = { start: 'c-backend', intermediate: 'c-frontend', end: 'c-security' };
@@ -669,7 +682,7 @@ function bpmnFill(node) {
   }
   if (node.kind === 'gateway') return 'c-cloud';
   if (node.kind === 'dataObject') return 'c-database';
-  return 'c-mask';
+  return componentFill[taskRole(node.taskType)] || 'c-external';
 }
 
 function taskTypeGlyph(taskType) {
@@ -688,6 +701,7 @@ function renderEvent(node) {
       : '';
   return `        <g ${focusNodeAttrs(node.id, node.label, eventPassport(node), workflow.meta.locale)}>
           ${focusNodeTitle(node.label, eventPassport(node))}
+          <circle cx="${node.cx}" cy="${node.cy}" r="${r}" class="c-mask"/>
           <circle cx="${node.cx}" cy="${node.cy}" r="${r}" class="${bpmnFill(node)}" stroke-width="2"/>
 ${inner.trim() ? `${inner}` : ''}
           <text data-node-label="" x="${node.cx}" y="${node.cy + r + 12}" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
@@ -701,6 +715,7 @@ function renderGateway(node) {
   const glyph = node.gatewayType === 'exclusive' ? 'X' : node.gatewayType === 'parallel' ? '+' : 'O';
   return `        <g ${focusNodeAttrs(node.id, node.label, gatewayPassport(node), workflow.meta.locale)}>
           ${focusNodeTitle(node.label, gatewayPassport(node))}
+          <polygon points="${points}" class="c-mask" stroke-width="1"/>
           <polygon points="${points}" class="${bpmnFill(node)}" stroke-width="2"/>
           <text x="${node.cx}" y="${node.cy + 3}" class="t-primary" font-size="10" font-weight="700" text-anchor="middle">${glyph}</text>
           <text data-node-label="" x="${node.cx}" y="${node.cy + h + 13}" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
@@ -708,7 +723,9 @@ function renderGateway(node) {
 }
 
 function renderTask(node) {
-  const accent = 't-muted';
+  const role = taskRole(node.taskType);
+  const fill = componentFill[role] || 'c-external';
+  const accent = componentText[role] || 't-muted';
   const hasSub = node.sublabel != null && node.sublabel !== '';
   const labelFontSize = fittedNodeFontSize(node.label, brandLabelFitWidth(node, node.width), nodeTextFit.labelPreferred, nodeTextFit.labelMinimum);
   const sublabelFontSize = hasSub
@@ -724,13 +741,11 @@ function renderTask(node) {
     ? `\n        <text data-detail="context" x="${node.x + node.width / 2}" y="${node.y - 4}" class="t-muted" font-size="7" text-anchor="middle">${esc(node.owner)}</text>`
     : '';
   const passport = { kind: node.kind, taskType: node.taskType, owner: node.owner, sublabel: node.sublabel, tag: node.tag, context: nodeContext(node) };
-  const glyph = `\n        <rect x="${node.x + 6}" y="${node.y + 5}" width="14" height="9" rx="2" class="semantic-sigil s-frontend" stroke-width="1"/>
-        <text x="${node.x + 13}" y="${node.y + 12}" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">${taskTypeGlyph(node.taskType)}</text>`;
   return `        <g ${focusNodeAttrs(node.id, node.label, passport, workflow.meta.locale)}>
           ${focusNodeTitle(node.label, passport)}${owner}
           <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8" class="c-mask"/>
-          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8" class="${bpmnFill(node)}"${animateAttr(workflow.meta, 'node', nodeStep(node))} stroke-width="1.5"/>
-${glyph}
+          <rect x="${node.x}" y="${node.y}" width="${node.width}" height="${node.height}" rx="8" class="${fill}"${animateAttr(workflow.meta, 'node', nodeStep(node))} stroke-width="1.5"/>
+          ${renderSemanticSigil(role, { x: node.x + 6, y: node.y + 6 })}
           <text data-node-label=""${hasSub ? ' data-detail-anchor=""' : ''} x="${node.cx}" y="${node.y + 26}" class="t-primary" font-size="${labelFontSize}" font-weight="600" text-anchor="middle">${esc(node.label)}</text>${sub}${tag}
         </g>`;
 }
@@ -740,8 +755,10 @@ function renderDataObject(node) {
   const w = node.width;
   return `        <g ${focusNodeAttrs(node.id, node.label, { kind: node.kind, context: nodeContext(node) }, workflow.meta.locale)}>
           ${focusNodeTitle(node.label, { kind: node.kind, context: nodeContext(node) })}
+          <rect x="${node.x}" y="${node.y}" width="${w}" height="${h}" rx="2" class="c-mask"/>
           <rect x="${node.x}" y="${node.y}" width="${w}" height="${h}" rx="2" class="${bpmnFill(node)}" stroke-width="1.5"/>
           <path d="M ${node.x + w - 14} ${node.y} v 10 h -14" class="c-mask" stroke-width="1"/>
+          ${renderSemanticSigil('database', { x: node.x + 6, y: node.y + 6 })}
           <text data-node-label="" x="${node.cx}" y="${node.cy + 3}" class="t-primary" font-size="9" font-weight="600" text-anchor="middle">${esc(node.label)}</text>
         </g>`;
 }
@@ -794,7 +811,7 @@ function legendFill(kind) {
   if (kind === 'event') return 'c-backend';
   if (kind === 'gateway') return 'c-cloud';
   if (kind === 'dataObject') return 'c-database';
-  return 'c-mask';
+  return componentFill[taskRole('service')] || 'c-external';
 }
 
 function renderLegend() {

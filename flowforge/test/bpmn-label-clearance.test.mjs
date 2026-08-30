@@ -55,12 +55,10 @@ function parseNodeGroups(html) {
 }
 
 function taskGlyphBottom(group) {
-  const match = group.match(/<rect[^>]*class="semantic-sigil s-frontend"[^>]*/);
+  const match = group.match(/data-semantic-sigil="[^"]+"[^>]*transform="translate\(([-\d.]+) ([-\d.]+)\)/);
   if (!match) return null;
-  const tag = match[0];
-  const y = Number((tag.match(/y="([-\d.]+)"/) || [])[1]);
-  const h = Number((tag.match(/height="([-\d.]+)"/) || [])[1]);
-  return Number.isFinite(y) && Number.isFinite(h) ? y + h : null;
+  const top = Number(match[2]);
+  return Number.isFinite(top) ? top + 9 : null; // sigil height at scale 0.6875 ~= 9px
 }
 
 function labelBaseline(group) {

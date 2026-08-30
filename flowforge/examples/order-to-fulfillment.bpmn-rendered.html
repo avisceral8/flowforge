@@ -5058,6 +5058,7 @@
         <!-- Nodes -->
         <g id="node-start" data-node-id="start" data-node-label="Start" tabindex="0" role="button" aria-label="Focus Start, Customer" aria-pressed="false" data-node-kind="event" data-node-context="Customer">
           <title>Start · Customer</title>
+          <circle cx="88" cy="119" r="18" class="c-mask"/>
           <circle cx="88" cy="119" r="18" class="c-backend" stroke-width="2"/>
 
           <text data-node-label="" x="88" y="149" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">Start</text>
@@ -5067,10 +5068,13 @@
           <title>Place order · quote + PO · Customer</title>
         <text data-detail="context" x="220" y="89" class="t-muted" font-size="7" text-anchor="middle">Customer</text>
           <rect x="174" y="93" width="92" height="52" rx="8" class="c-mask"/>
-          <rect x="174" y="93" width="92" height="52" rx="8" class="c-mask" stroke-width="1.5"/>
-
-        <rect x="180" y="99" width="16" height="12" rx="3" class="semantic-sigil s-frontend" stroke-width="1"/>
-        <text x="188" y="108" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">></text>
+          <rect x="174" y="93" width="92" height="52" rx="8" class="c-messagebus" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="messagebus" class="semantic-sigil s-messagebus" transform="translate(180 99) scale(0.6875)">
+            <path d="M2.5 4.5h11M2.5 8h11M2.5 11.5h11"/>
+            <circle cx="5" cy="4.5" r="1" class="sigil-fill"/>
+            <circle cx="10.5" cy="8" r="1" class="sigil-fill"/>
+            <circle cx="7" cy="11.5" r="1" class="sigil-fill"/>
+          </g>
           <text data-node-label="" data-detail-anchor="" x="220" y="119" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Place order</text>
           <text data-detail="context" x="220" y="134" class="t-muted" font-size="8" text-anchor="middle">quote + PO</text>
         </g>
@@ -5079,16 +5083,17 @@
           <title>Validate credit · limit + terms · Finance</title>
         <text data-detail="context" x="220" y="213" class="t-muted" font-size="7" text-anchor="middle">Finance</text>
           <rect x="166" y="217" width="108" height="52" rx="8" class="c-mask"/>
-          <rect x="166" y="217" width="108" height="52" rx="8" class="c-mask" stroke-width="1.5"/>
-
-        <rect x="172" y="223" width="16" height="12" rx="3" class="semantic-sigil s-frontend" stroke-width="1"/>
-        <text x="180" y="232" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">S</text>
+          <rect x="166" y="217" width="108" height="52" rx="8" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(172 223) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
           <text data-node-label="" data-detail-anchor="" x="220" y="243" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Validate credit</text>
           <text data-detail="context" x="220" y="258" class="t-muted" font-size="8" text-anchor="middle">limit + terms</text>
         </g>
 
         <g id="node-credit" data-node-id="credit" data-node-label="Credit ok?" tabindex="0" role="button" aria-label="Focus Credit ok?, Finance" aria-pressed="false" data-node-kind="gateway" data-node-context="Finance">
           <title>Credit ok? · Finance</title>
+          <polygon points="430,219 454,243 430,267 406,243" class="c-mask" stroke-width="1"/>
           <polygon points="430,219 454,243 430,267 406,243" class="c-cloud" stroke-width="2"/>
           <text x="430" y="246" class="t-primary" font-size="10" font-weight="700" text-anchor="middle">X</text>
           <text data-node-label="" x="430" y="280" class="t-primary" font-size="8" font-weight="600" text-anchor="middle">Credit ok?</text>
@@ -5098,10 +5103,13 @@
           <title>Fulfill order · pick + pack · Warehouse</title>
         <text data-detail="context" x="430" y="337" class="t-muted" font-size="7" text-anchor="middle">Warehouse</text>
           <rect x="384" y="341" width="92" height="52" rx="8" class="c-mask"/>
-          <rect x="384" y="341" width="92" height="52" rx="8" class="c-mask" stroke-width="1.5"/>
-
-        <rect x="390" y="347" width="16" height="12" rx="3" class="semantic-sigil s-frontend" stroke-width="1"/>
-        <text x="398" y="356" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">U</text>
+          <rect x="384" y="341" width="92" height="52" rx="8" class="c-frontend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="frontend" class="semantic-sigil s-frontend" transform="translate(390 347) scale(0.6875)">
+            <rect x="2" y="3" width="12" height="10" rx="2"/>
+            <path d="M2 6.5h12"/>
+            <circle cx="4.1" cy="4.8" r=".7" class="sigil-fill"/>
+            <circle cx="6.3" cy="4.8" r=".7" class="sigil-fill"/>
+          </g>
           <text data-node-label="" data-detail-anchor="" x="430" y="367" class="t-primary" font-size="10.7" font-weight="600" text-anchor="middle">Fulfill order</text>
           <text data-detail="context" x="430" y="382" class="t-muted" font-size="8" text-anchor="middle">pick + pack</text>
         </g>
@@ -5110,16 +5118,17 @@
           <title>Ship order · carrier handoff · Warehouse</title>
         <text data-detail="context" x="625" y="337" class="t-muted" font-size="7" text-anchor="middle">Warehouse</text>
           <rect x="579" y="341" width="92" height="52" rx="8" class="c-mask"/>
-          <rect x="579" y="341" width="92" height="52" rx="8" class="c-mask" stroke-width="1.5"/>
-
-        <rect x="585" y="347" width="16" height="12" rx="3" class="semantic-sigil s-frontend" stroke-width="1"/>
-        <text x="593" y="356" class="t-primary" font-size="7" font-weight="700" text-anchor="middle">S</text>
+          <rect x="579" y="341" width="92" height="52" rx="8" class="c-backend" stroke-width="1.5"/>
+          <g aria-hidden="true" data-semantic-sigil="backend" class="semantic-sigil s-backend" transform="translate(585 347) scale(0.6875)">
+            <path d="M6 3 3 8l3 5M10 3l3 5-3 5"/>
+          </g>
           <text data-node-label="" data-detail-anchor="" x="625" y="367" class="t-primary" font-size="11" font-weight="600" text-anchor="middle">Ship order</text>
           <text data-detail="context" x="625" y="382" class="t-muted" font-size="8" text-anchor="middle">carrier handoff</text>
         </g>
 
         <g id="node-delivered" data-node-id="delivered" data-node-label="Delivered" tabindex="0" role="button" aria-label="Focus Delivered, Customer" aria-pressed="false" data-node-kind="event" data-node-context="Customer">
           <title>Delivered · Customer</title>
+          <circle cx="625" cy="119" r="18" class="c-mask"/>
           <circle cx="625" cy="119" r="18" class="c-security" stroke-width="2"/>
 
         <circle cx="625" cy="119" r="12" class="c-security" stroke-width="3"/>
@@ -5128,6 +5137,7 @@
 
         <g id="node-rejected" data-node-id="rejected" data-node-label="Rejected" tabindex="0" role="button" aria-label="Focus Rejected, Finance" aria-pressed="false" data-node-kind="event" data-node-context="Finance">
           <title>Rejected · Finance</title>
+          <circle cx="625" cy="243" r="18" class="c-mask"/>
           <circle cx="625" cy="243" r="18" class="c-security" stroke-width="2"/>
 
         <circle cx="625" cy="243" r="12" class="c-security" stroke-width="3"/>
@@ -5163,7 +5173,7 @@
             <text x="42" y="448" class="t-muted" font-size="7.5" font-weight="500">User UI</text>
           </g>
           <g data-legend-semantic-kind="task" data-legend-kind="task" data-legend-label="Agent logic" data-legend-x="101" data-legend-baseline="448" data-legend-width="91">
-            <rect x="101" y="440" width="14" height="9" rx="2" class="c-mask" stroke-width="1"/>
+            <rect x="101" y="440" width="14" height="9" rx="2" class="c-backend" stroke-width="1"/>
             <text x="123" y="448" class="t-muted" font-size="7.5" font-weight="500">Agent logic</text>
           </g>
           <g data-legend-semantic-kind="gateway" data-legend-kind="gateway" data-legend-label="Cloud service" data-legend-x="199" data-legend-baseline="448" data-legend-width="100">
