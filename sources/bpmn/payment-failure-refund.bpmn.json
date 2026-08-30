@@ -19,7 +19,7 @@
         "note": "Payment failure cancels the order and refunds the amount."
       }
     ],
-    "output": "sources/bpmn/payment-failure-refund.bpmn-rendered.html"
+    "output": "outputs/bpmn/payment-failure-refund.html"
   },
   "pools": [
     { "id": "customer", "label": "Customer" },

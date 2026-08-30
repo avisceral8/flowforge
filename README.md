@@ -57,18 +57,22 @@ Raven is a manual ZIP installation outside the agent switcher: extract `flowforg
 ```bash
 npm install
 node bin/flowforge.mjs doctor
-node bin/flowforge.mjs render bpmn sources/bpmn/order-to-fulfillment.bpmn.json order-to-fulfillment.html --quality showcase
-node bin/flowforge.mjs compare bpmn sources/bpmn/order-to-cash.bpmn.json sources/bpmn/order-to-cash-v2.bpmn.json order-to-cash-delta.html --json
+node bin/flowforge.mjs render bpmn sources/bpmn/order-to-fulfillment.bpmn.json outputs/bpmn/order-to-fulfillment.html --quality showcase
+node bin/flowforge.mjs compare bpmn sources/bpmn/order-to-cash.bpmn.json sources/bpmn/order-to-cash-v2.bpmn.json outputs/bpmn/order-to-cash-delta.html --json
 ```
 
-## Sources
+## Sources and outputs
 
-Source JSON for the BPMN and canvas examples lives in `sources/`:
+- `sources/` holds the authoring IR (JSON) for BPMN and canvas diagrams:
 
-```
-sources/bpmn/     order-to-fulfillment, order-to-cash, order-to-cash-v2
-sources/canvas/   journey, infoflow, stakeholder-map, capability, okr-tree, north-star, growth-loop, launch-plan, feedback-pipeline
-```
+  ```
+  sources/bpmn/     order-to-fulfillment, order-to-cash, order-to-cash-v2, payment-failure-refund
+  sources/canvas/   journey, infoflow, stakeholder-map, capability, okr-tree, north-star, growth-loop, launch-plan, feedback-pipeline
+  ```
+
+- `outputs/` is the single home for every rendered artifact. Every `render`
+  and `compare` target writes here, grouped by diagram type under
+  `outputs/<type>/`. See [`outputs/README.md`](outputs/README.md).
 
 ## Not supported
 
