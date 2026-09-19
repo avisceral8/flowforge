@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "diagram_type": "bpmn",
+  "meta": {
+    "title": "Procure-to-Pay: MSA to Invoice",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "happy-path",
+        "label": "Clean order path",
+        "focus": ["start", "msa", "sow", "pr", "prg", "po", "pay", "paid"],
+        "note": "Contract first, then requisition, PO, delivery, and payment."
+      },
+      {
+        "id": "rework",
+        "label": "Requisition rework",
+        "focus": ["pr", "prg"],
+        "note": "Rejected requisitions return to the requester for revision."
+      }
+    ],
+    "output": "outputs/bpmn/procure-to-pay.html"
+  },
+  "pools": [
+    { "id": "company", "label": "Company" },
+    { "id": "vendor", "label": "Vendor" }
+  ],
+  "lanes": [
+    { "id": "business", "label": "Business Owner", "pool": "company" },
+    { "id": "legal", "label": "Legal", "pool": "company" },
+    { "id": "procurement", "label": "Procurement", "pool": "company" },
+    { "id": "ap", "label": "Accounts Payable", "pool": "company" },
+    { "id": "vendorlane", "label": "Vendor", "pool": "vendor" }
+  ],
+  "mainPath": ["start", "msa", "sow", "pr", "prg", "po", "pay", "paid"],
+  "nodes": [
+    { "id": "start", "lane": "business", "col": 0, "kind": "event", "eventType": "start", "label": "Need identified" },
+    { "id": "msa", "lane": "legal", "col": 1, "kind": "task", "taskType": "user", "owner": "Legal", "label": "Execute MSA", "sublabel": "master terms" },
+    { "id": "sow", "lane": "business", "col": 2, "kind": "task", "taskType": "user", "owner": "Business", "label": "Agree SOW", "sublabel": "scope + pricing" },
+    { "id": "pr", "lane": "business", "col": 3, "kind": "task", "taskType": "send", "owner": "Business", "label": "Raise PR", "sublabel": "references SOW" },
+    { "id": "prg", "lane": "procurement", "col": 3, "kind": "gateway", "gatewayType": "exclusive", "label": "Approved?" },
+    { "id": "po", "lane": "procurement", "col": 5, "kind": "task", "taskType": "service", "owner": "Procurement", "label": "Issue PO", "sublabel": "from approved PR" },
+    { "id": "pay", "lane": "ap", "col": 5, "kind": "task", "taskType": "business-rule", "owner": "AP", "label": "Match & pay", "sublabel": "3-way match", "width": 108 },
+    { "id": "paid", "lane": "vendorlane", "col": 5, "kind": "event", "eventType": "end", "label": "Paid" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "msa", "role": "main" },
+    { "id": "e2", "from": "msa", "to": "sow", "role": "main", "label": "terms set" },
+    { "id": "e3", "from": "sow", "to": "pr", "role": "main" },
+    { "id": "e4", "from": "pr", "to": "prg", "label": "submit", "labelDy": 44, "fromSide": "bottom", "toSide": "top", "route": "straight" },
+    { "id": "e5", "from": "prg", "to": "po", "label": "yes", "role": "main" },
+    { "id": "e6", "from": "prg", "to": "pr", "label": "no", "route": "return-left" },
+    { "id": "e7", "from": "po", "to": "pay", "label": "goods + invoice" },
+    { "id": "e8", "from": "pay", "to": "paid", "kind": "message", "label": "payment" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Contract Cascade",
+      "items": [
+        "MSA sets the legal frame once",
+        "SOW prices each piece of work under it",
+        "PR and PO both cite the SOW, not a new deal"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Control Points",
+      "items": [
+        "No PR without an approved SOW",
+        "Procurement gates the requisition",
+        "Vendor delivers, then invoices against the PO"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "Every dollar of spend traces to a contract",
+        "Vendor is paid against evidence, not memory"
+      ]
+    }
+  ]
+}

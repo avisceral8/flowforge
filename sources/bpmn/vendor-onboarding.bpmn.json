@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "diagram_type": "bpmn",
+  "meta": {
+    "title": "Vendor Onboarding",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "standard-risk",
+        "label": "Standard risk path",
+        "focus": ["start", "select", "register", "screen", "riskg", "onboard", "active"],
+        "note": "Vendor clears screening on first pass and goes straight to activation."
+      },
+      {
+        "id": "high-risk",
+        "label": "High-risk loop",
+        "focus": ["riskg", "enhanced", "rejected"],
+        "note": "High-risk vendors get enhanced due diligence or rejection."
+      }
+    ],
+    "output": "outputs/bpmn/vendor-onboarding.html"
+  },
+  "pools": [
+    { "id": "company", "label": "Company" },
+    { "id": "vendor", "label": "Vendor" }
+  ],
+  "lanes": [
+    { "id": "requester", "label": "Requesting Team", "pool": "company" },
+    { "id": "procurement", "label": "Procurement", "pool": "company" },
+    { "id": "compliance", "label": "Compliance", "pool": "company" },
+    { "id": "risk", "label": "Risk Review", "pool": "company" },
+    { "id": "vendorlane", "label": "Vendor", "pool": "vendor" }
+  ],
+  "mainPath": ["start", "select", "register", "screen", "riskg", "onboard", "active"],
+  "nodes": [
+    { "id": "start", "lane": "requester", "col": 0, "kind": "event", "eventType": "start", "label": "Need identified" },
+    { "id": "select", "lane": "procurement", "col": 1, "kind": "task", "taskType": "user", "owner": "Procurement", "label": "Select vendor", "sublabel": "shortlist + quote" },
+    { "id": "register", "lane": "vendorlane", "col": 2, "kind": "task", "taskType": "user", "owner": "Vendor", "label": "Submit registration", "sublabel": "docs + tax forms", "width": 132 },
+    { "id": "screen", "lane": "compliance", "col": 2, "kind": "task", "taskType": "business-rule", "owner": "Compliance", "label": "Screen vendor", "sublabel": "sanctions + KYB" },
+    { "id": "riskg", "lane": "compliance", "col": 4, "kind": "gateway", "gatewayType": "exclusive", "label": "Risk cleared?" },
+    { "id": "enhanced", "lane": "risk", "col": 5, "kind": "task", "taskType": "manual", "owner": "Risk Review", "label": "Enhanced review", "sublabel": "high-risk cases", "width": 104 },
+    { "id": "onboard", "lane": "procurement", "col": 4, "kind": "task", "taskType": "user", "owner": "Procurement", "label": "Approve & activate", "sublabel": "sign MSA + ERP record", "width": 124 },
+    { "id": "rejected", "lane": "compliance", "col": 5, "kind": "event", "eventType": "end", "label": "Rejected" },
+    { "id": "active", "lane": "procurement", "col": 5, "kind": "event", "eventType": "end", "label": "Vendor active" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "select", "role": "main" },
+    { "id": "e2", "from": "select", "to": "register", "kind": "message", "label": "invite" },
+    { "id": "e3", "from": "register", "to": "screen", "kind": "message", "label": "documents" },
+    { "id": "e4", "from": "screen", "to": "riskg", "role": "main" },
+    { "id": "e5", "from": "riskg", "to": "onboard", "label": "clear", "role": "main", "fromSide": "top", "toSide": "bottom", "route": "straight" },
+    { "id": "e6", "from": "riskg", "to": "enhanced", "label": "high risk", "labelDx": -40 },
+    { "id": "e7", "from": "enhanced", "to": "riskg", "label": "reassess", "labelDy": 26, "labelDx": 36 },
+    { "id": "e8", "from": "riskg", "to": "rejected", "label": "fail", "route": "straight" },
+    { "id": "e9", "from": "onboard", "to": "active", "role": "main" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Gate Order",
+      "items": [
+        "Selection precedes any vendor data entry",
+        "Screening covers sanctions, KYB, and tax",
+        "Nothing enters the ERP before compliance clears"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Risk Tiers",
+      "items": [
+        "High-risk vendors get enhanced due diligence",
+        "Enhanced review returns to the same gate",
+        "Failed vendors end as Rejected, not pending"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "One auditable gate before spend is possible",
+        "Vendor master is the single source of truth"
+      ]
+    }
+  ]
+}

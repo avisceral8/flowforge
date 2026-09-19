@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "diagram_type": "bpmn",
+  "meta": {
+    "title": "Three-Way Match & Invoice Exceptions",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "clean-match",
+        "label": "Clean match",
+        "focus": ["start", "match", "tol", "post", "paid"],
+        "note": "PO, goods receipt, and invoice agree; payment posts on schedule."
+      },
+      {
+        "id": "exception",
+        "label": "Exception handling",
+        "focus": ["tol", "buyerfix", "vendfix", "match"],
+        "note": "Price gaps go to the requester; quantity gaps go to the vendor."
+      }
+    ],
+    "output": "outputs/bpmn/three-way-match-exceptions.html"
+  },
+  "pools": [
+    { "id": "company", "label": "Company" },
+    { "id": "vendor", "label": "Vendor" }
+  ],
+  "lanes": [
+    { "id": "ap", "label": "Accounts Payable", "pool": "company" },
+    { "id": "buyer", "label": "Requester", "pool": "company" },
+    { "id": "vendorlane", "label": "Vendor", "pool": "vendor" }
+  ],
+  "mainPath": ["start", "match", "tol", "post", "paid"],
+  "nodes": [
+    { "id": "start", "lane": "ap", "col": 0, "kind": "event", "eventType": "start", "label": "Invoice received" },
+    { "id": "match", "lane": "ap", "col": 1, "kind": "task", "taskType": "business-rule", "owner": "AP", "label": "3-way match", "sublabel": "PO + GRN + invoice", "width": 116 },
+    { "id": "tol", "lane": "ap", "col": 3, "kind": "gateway", "gatewayType": "exclusive", "label": "Within tolerance?" },
+    { "id": "post", "lane": "ap", "col": 5, "kind": "task", "taskType": "service", "owner": "AP", "label": "Post & schedule", "sublabel": "payment run", "width": 110 },
+    { "id": "paid", "lane": "vendorlane", "col": 5, "kind": "event", "eventType": "end", "label": "Paid" },
+    { "id": "buyerfix", "lane": "buyer", "col": 4, "kind": "task", "taskType": "user", "owner": "Requester", "label": "Resolve price gap", "sublabel": "approve or contest", "width": 126 },
+    { "id": "vendfix", "lane": "vendorlane", "col": 2, "kind": "task", "taskType": "user", "owner": "Vendor", "label": "Correct invoice", "sublabel": "credit note / resubmit", "width": 126 }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "match", "role": "main" },
+    { "id": "e2", "from": "match", "to": "tol", "role": "main", "fromSide": "right", "toSide": "left", "route": "straight" },
+    { "id": "e3", "from": "tol", "to": "post", "label": "yes", "role": "main", "route": "straight" },
+    { "id": "e4", "from": "post", "to": "paid", "kind": "message", "label": "payment" },
+    { "id": "e5", "from": "tol", "to": "buyerfix", "label": "price gap", "labelDx": 56, "labelDy": 46 },
+    { "id": "e6", "from": "tol", "to": "vendfix", "label": "qty gap", "labelDx": -44, "kind": "message" },
+    { "id": "e7", "from": "buyerfix", "to": "tol", "label": "recheck", "labelDy": 26, "labelDx": 36 },
+    { "id": "e8", "from": "vendfix", "to": "match", "kind": "message", "label": "resubmitted" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "The Three Documents",
+      "items": [
+        "PO: what was ordered and at what price",
+        "GRN: what actually arrived",
+        "Invoice: what the vendor claims"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Exception Routing",
+      "items": [
+        "Price gaps go to the requester who ordered",
+        "Quantity gaps go back to the vendor",
+        "Nothing is paid while an exception is open"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "Payment is released only on documented agreement",
+        "Exceptions loop until documents agree"
+      ]
+    }
+  ]
+}

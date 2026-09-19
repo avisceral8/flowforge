@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "diagram_type": "bpmn",
+  "meta": {
+    "title": "RFx Sourcing & Award",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "full-cycle",
+        "label": "Full cycle",
+        "focus": ["start", "brief", "issue", "bid", "score", "neg", "appg", "award", "done"],
+        "note": "From spend threshold to a signed award."
+      },
+      {
+        "id": "evaluate",
+        "label": "Evaluate & negotiate",
+        "focus": ["bid", "score", "neg", "appg"],
+        "note": "Weighted scoring narrows the field before negotiation."
+      }
+    ],
+    "output": "outputs/bpmn/rfx-sourcing-award.html"
+  },
+  "pools": [
+    { "id": "company", "label": "Company" },
+    { "id": "vendor", "label": "Vendors" }
+  ],
+  "lanes": [
+    { "id": "business", "label": "Business Owner", "pool": "company" },
+    { "id": "sourcing", "label": "Sourcing (Procurement)", "pool": "company" },
+    { "id": "lead", "label": "Category Lead", "pool": "company" },
+    { "id": "legal", "label": "Legal", "pool": "company" },
+    { "id": "vendorlane", "label": "Bidders", "pool": "vendor" }
+  ],
+  "mainPath": ["start", "brief", "issue", "bid", "score", "neg", "appg", "award", "done"],
+  "nodes": [
+    { "id": "start", "lane": "business", "col": 0, "kind": "event", "eventType": "start", "label": "Spend above threshold" },
+    { "id": "brief", "lane": "business", "col": 1, "kind": "task", "taskType": "user", "owner": "Business", "label": "Define requirements", "sublabel": "spec + budget", "width": 124 },
+    { "id": "issue", "lane": "sourcing", "col": 2, "kind": "task", "taskType": "send", "owner": "Sourcing", "label": "Issue RFP", "sublabel": "to shortlist", "width": 104 },
+    { "id": "bid", "lane": "vendorlane", "col": 3, "kind": "task", "taskType": "user", "owner": "Bidder", "label": "Prepare bid", "width": 104 },
+    { "id": "score", "lane": "sourcing", "col": 4, "kind": "task", "taskType": "business-rule", "owner": "Sourcing", "label": "Score bids", "sublabel": "weighted criteria" },
+    { "id": "neg", "lane": "lead", "col": 4, "kind": "task", "taskType": "user", "owner": "Category Lead", "label": "Negotiate", "sublabel": "best & final" },
+    { "id": "appg", "lane": "business", "col": 5, "kind": "gateway", "gatewayType": "exclusive", "label": "Award approved?" },
+    { "id": "award", "lane": "legal", "col": 5, "kind": "task", "taskType": "user", "owner": "Legal", "label": "Sign contract", "width": 104 },
+    { "id": "done", "lane": "vendorlane", "col": 5, "kind": "event", "eventType": "end", "label": "Contract signed" }
+  ],
+  "edges": [
+    { "id": "e1", "from": "start", "to": "brief", "role": "main" },
+    { "id": "e2", "from": "brief", "to": "issue", "role": "main" },
+    { "id": "e3", "from": "issue", "to": "bid", "kind": "message", "label": "RFP", "labelDy": 44, "fromSide": "bottom", "toSide": "top" },
+    { "id": "e4", "from": "bid", "to": "score", "kind": "message", "label": "bids due", "labelDx": -40, "labelDy": -40, "fromSide": "top", "toSide": "left" },
+    { "id": "e5", "from": "score", "to": "neg", "role": "main", "label": "shortlist", "labelDx": 34, "labelDy": 30, "fromSide": "bottom", "toSide": "top", "route": "straight" },
+    { "id": "e6", "from": "neg", "to": "appg", "label": "recommendation", "labelDx": -60, "labelDy": -50 },
+    { "id": "e7", "from": "appg", "to": "award", "label": "yes", "labelDx": -36, "labelDy": 30, "role": "main", "fromSide": "bottom", "toSide": "top", "route": "straight" },
+    { "id": "e8", "from": "appg", "to": "score", "label": "rework", "labelDx": -100, "labelDy": -34 },
+    { "id": "e9", "from": "award", "to": "done", "role": "main", "kind": "message", "fromSide": "bottom", "toSide": "top", "route": "straight" }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Competitive Tension",
+      "items": [
+        "Threshold spend triggers a formal RFx",
+        "Same spec and criteria go to every bidder",
+        "Scoring is weighted before bids are read"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Decision Discipline",
+      "items": [
+        "Only the shortlist enters negotiation",
+        "Business owner approves the award",
+        "Legal signs; sourcing never self-approves"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why It Matters",
+      "items": [
+        "Award decisions are defensible after the fact",
+        "The contract inherits the negotiated terms"
+      ]
+    }
+  ]
+}
